@@ -1,0 +1,15 @@
+export const colorPalette = {
+  black: '#1d1d1d',
+  white: '#ffffff',
+  blueJeans: '#47A8E4',
+  blue: '#0F5298',
+  darkBlue: '#2565AE',
+  cyanBlue: '#3C99DC',
+  softBlue: '#66D3FA',
+  brightRed: '#de1738',
+  lavenderGray: '#BBC4CE',
+  lightGreen: '#F2F3F3',
+  rollingStation: '#7B858C',
+  gray: '#4A4E52',
+  lightSlateGray: '#84909D',
+};
