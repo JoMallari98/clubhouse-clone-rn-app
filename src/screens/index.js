@@ -10,3 +10,4 @@ export * from './settings';
 export * from './searching';
 export * from './start-a-lobby';
 export * from './room';
+export * from './profile';

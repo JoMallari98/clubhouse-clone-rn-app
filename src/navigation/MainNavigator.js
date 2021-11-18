@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
   HomeScreen,
+  ProfileScreen,
   RoomScreen,
   SearchingScreen,
   SettingsScreen,
@@ -23,6 +24,7 @@ export const MainNavigator = () => {
       <Stack.Screen name="Searching" component={SearchingScreen} />
       <Stack.Screen name="StartALobby" component={StartALobbyScreen} />
       <Stack.Screen name="Room" component={RoomScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
   );
 };

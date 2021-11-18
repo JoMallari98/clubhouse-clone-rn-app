@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 import { put, delay, call } from 'redux-saga/effects';
 import auth from '@react-native-firebase/auth';
+import { StorageUtils } from '../../utils/storage';
 
 export const triggerSignUpSucceded = createAction('signUp/triggerSignUpSucceded');
 
@@ -17,6 +18,8 @@ function signUp(payload) {
 export function* onTriggerSignUpSaga(action) {
   try {
     const result = yield call(signUp, action.payload);
+
+    StorageUtils.setObjectValue('@user', result?.user);
     yield put(triggerSignUpSucceded(result));
   } catch (error) {
     let message = 'Signup is not success';

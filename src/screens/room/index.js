@@ -18,6 +18,9 @@ export const RoomScreen = () => {
 
   const { poolSizes } = useSelector((state) => state.settings);
 
+  const [muteRoom, setMuteRoom] = useState(false);
+  const [participants, setParticipants] = useState([]);
+
   useEffect(() => {
     const selectedPoolSize = poolSizes.find((x) => x.isSelected === true);
     const list = [{ isMicOn: true, isSpeaking: false, name: 'Adam' }];
@@ -26,9 +29,6 @@ export const RoomScreen = () => {
     }
     setParticipants(list);
   }, []);
-
-  const [muteRoom, setMuteRoom] = useState(false);
-  const [participants, setParticipants] = useState([]);
 
   const getStyle = (index) => {
     if (index == 0) {

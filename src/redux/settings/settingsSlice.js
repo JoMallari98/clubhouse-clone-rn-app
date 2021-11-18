@@ -1,25 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { exp } from 'react-native/Libraries/Animated/Easing';
 
 const initialState = {
+  isLoading: false,
+  error: null,
   chatRoomTypes: [
-    { id: 1, name: 'Just Chat', isSelected: false },
-    { id: 2, name: 'Sports', isSelected: false },
-    { id: 3, name: '1 on 1 advice', isSelected: true },
-    { id: 4, name: 'Tourism', isSelected: false },
-    { id: 5, name: 'Random', isSelected: false },
+    // { id: 1, name: 'Just Chat', isSelected: false },
+    // { id: 2, name: 'Sports', isSelected: false },
+    // { id: 3, name: '1 on 1 advice', isSelected: true },
+    // { id: 4, name: 'Tourism', isSelected: false },
+    // { id: 5, name: 'Random', isSelected: false },
   ],
   commuteTypes: [
-    { id: 1, name: '15 min', isSelected: true },
-    { id: 2, name: '20 min', isSelected: false },
-    { id: 3, name: '40 min', isSelected: false },
-    { id: 4, name: '1 hr+', isSelected: false },
+    // { id: 1, name: '15 min', isSelected: true },
+    // { id: 2, name: '20 min', isSelected: false },
+    // { id: 3, name: '40 min', isSelected: false },
+    // { id: 4, name: '1 hr+', isSelected: false },
   ],
   poolSizes: [
-    { id: 1, name: '4', isSelected: false },
-    { id: 2, name: '6', isSelected: false },
-    { id: 3, name: '8', isSelected: false },
-    { id: 4, name: '10', isSelected: false },
+    // { id: 1, name: '4', isSelected: false },
+    // { id: 2, name: '6', isSelected: false },
+    // { id: 3, name: '8', isSelected: false },
+    // { id: 4, name: '10', isSelected: false },
   ],
+  defaultChatRoomSettings: null,
   isValid: false,
 };
 export const settingsSlice = createSlice({
@@ -27,88 +31,88 @@ export const settingsSlice = createSlice({
   initialState,
   reducers: {
     selectChatRoomType: (state, action) => {
-      console.log('SELECT CHAT ROOM TYPES ', action.payload);
-      let newList = [];
-      for (let index in state.chatRoomTypes) {
-        if (state.chatRoomTypes[index].id == action.payload) {
-          newList.push({
-            id: state.chatRoomTypes[index].id,
-            name: state.chatRoomTypes[index].name,
-            isSelected: !state.chatRoomTypes[index].isSelected,
-          });
-        } else {
-          newList.push({
-            id: state.chatRoomTypes[index].id,
-            name: state.chatRoomTypes[index].name,
-            isSelected: false,
-          });
-        }
-      }
-      return {
-        ...state,
-        isValid: isAllSettingsSelected(newList, state.commuteTypes, state.poolSizes),
-        chatRoomTypes: newList,
-      };
+      state.defaultChatRoomSettings.selectedChatRoomType = action.payload;
+      state.isValid = isAllSettingsSelected(state);
     },
     selectCommuteTypes: (state, action) => {
-      let commuteTypesNewList = [];
-      for (let index in state.commuteTypes) {
-        if (state.commuteTypes[index].id == action.payload) {
-          commuteTypesNewList.push({
-            id: state.commuteTypes[index].id,
-            name: state.commuteTypes[index].name,
-            isSelected: !state.commuteTypes[index].isSelected,
-          });
-        } else {
-          commuteTypesNewList.push({
-            id: state.commuteTypes[index].id,
-            name: state.commuteTypes[index].name,
-            isSelected: false,
-          });
-        }
-      }
-      return {
-        ...state,
-        isValid: isAllSettingsSelected(state.chatRoomTypes, commuteTypesNewList, state.poolSizes),
-        commuteTypes: commuteTypesNewList,
-      };
+      state.defaultChatRoomSettings.selectedEstCommuteType = action.payload;
+      state.isValid = isAllSettingsSelected(state);
     },
     selectPoolSizes: (state, action) => {
-      let poolSizesNewList = [];
-      for (let index in state.poolSizes) {
-        if (state.poolSizes[index].id == action.payload) {
-          poolSizesNewList.push({
-            id: state.poolSizes[index].id,
-            name: state.poolSizes[index].name,
-            isSelected: !state.poolSizes[index].isSelected,
-          });
-        } else {
-          poolSizesNewList.push({
-            id: state.poolSizes[index].id,
-            name: state.poolSizes[index].name,
-            isSelected: false,
-          });
+      state.defaultChatRoomSettings.selectedPreferredPoolSize = action.payload;
+      state.isValid = isAllSettingsSelected(state);
+    },
+    triggerGetGlobalSettings: (state, action) => {
+      state.isLoading = true;
+    },
+    triggerGetGlobalSettingsFailed: (state, action) => {
+      state.isLoading = false;
+    },
+    triggerGetGlobalSettingsSucceded: (state, action) => {
+      console.log('data in --> 0');
+      state.isLoading = false;
+
+      const modifiedChatRoomTypes = [];
+      const tempChatRoomTypes = [];
+      action.payload.chatRoomTypes?.forEach((element) => {
+        if (element?.isWeeklyAdChat && element.isActive) {
+          modifiedChatRoomTypes.push(element);
         }
-      }
-      return {
-        ...state,
-        isValid: isAllSettingsSelected(state.chatRoomTypes, state.commuteTypes, poolSizesNewList),
-        poolSizes: poolSizesNewList,
-      };
+        if (!element?.isWeeklyAdChat && element.isActive) {
+          tempChatRoomTypes.push(element);
+        }
+      });
+      state.chatRoomTypes = [...modifiedChatRoomTypes, ...tempChatRoomTypes];
+
+      state.commuteTypes = action.payload.estCommuteTypes.filter(function (el) {
+        return el.isActive == true;
+      });
+      state.poolSizes = action.payload.preferredPoolSizes.filter(function (el) {
+        return el.isActive == true;
+      });
+    },
+    triggerGetUserChatSettings: (state, action) => {
+      state.isLoading = true;
+    },
+    triggerGetUserChatSettingsFailed: (state, action) => {
+      state.isLoading = false;
+    },
+    triggerGetUserChatSettingsSucceeded: (state, action) => {
+      console.log('data in --> 1');
+      state.isLoading = false;
+      state.defaultChatRoomSettings = action.payload?.defaultChatRoomSettings;
+    },
+    triggerUpdateUserChatSettings: (state, action) => {
+      state.isLoading = true;
+    },
+    triggerUpdateUserChatSettingsFailed: (state, action) => {
+      state.isLoading = false;
+    },
+    triggerUpdateUserChatSettingsSucceeded: (state, action) => {
+      console.log('data in --> 2');
+      state.isLoading = false;
+      state.defaultChatRoomSettings = action.payload;
+      state.isValid = isAllSettingsSelected(state);
+      console.log(' triggerUpdateUserChatSettingsSucceeded ', action.payload);
     },
   },
 });
 
-function isAllSettingsSelected(chatRoomTypes, commuteTypes, poolSizes) {
-  const chatRoomSelctedCount = chatRoomTypes.find((el) => el.isSelected === true);
-  const commuteTypesSelctedCount = commuteTypes.find((el) => el.isSelected === true);
-  const poolSizesSelctedCount = poolSizes.find((el) => el.isSelected === true);
-  if (chatRoomSelctedCount && commuteTypesSelctedCount && poolSizesSelctedCount) {
-    return true;
-  }
-  return false;
+function isAllSettingsSelected(state) {
+  return state.defaultChatRoomSettings.selectedChatRoomType &&
+    state.defaultChatRoomSettings.selectedPreferredPoolSize &&
+    state.defaultChatRoomSettings.selectedEstCommuteType
+    ? true
+    : false;
 }
 
-export const { selectChatRoomType, selectCommuteTypes, selectPoolSizes } = settingsSlice.actions;
+export const {
+  selectChatRoomType,
+  selectCommuteTypes,
+  selectPoolSizes,
+  triggerGetGlobalSettings,
+  triggerGetUserChatSettings,
+  triggerUpdateUserChatSettings,
+} = settingsSlice.actions;
 
 export default settingsSlice.reducer;

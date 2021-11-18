@@ -5,6 +5,8 @@ import { triggerSignUpSucceded } from '../signUp/signUpSagas';
 const initialState = {
   appStatus: '',
   user: null,
+  isLoading: false,
+  error: null,
 };
 
 export const generalSlice = createSlice({
@@ -12,10 +14,29 @@ export const generalSlice = createSlice({
   initialState,
   reducers: {
     setAppStatus: (state, action) => {
-      appStatus = action.payload;
+      state.appStatus = action.payload;
     },
     setCurrentUser: (state, action) => {
-      user = action.payload;
+      state.user = action.payload;
+    },
+    triggerGetCurrentUser: (state) => {
+      state.isLoading = true;
+      state.error = null;
+      state.user = null;
+    },
+    triggerGetCurrentUserSucceded: (state, action) => {
+      return {
+        ...state,
+        isLoading: false,
+        user: action.payload,
+      };
+    },
+    triggerGetCurrentUserFailed: (state, action) => {
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      };
     },
   },
   extraReducers: (builder) => {
@@ -34,6 +55,6 @@ export const generalSlice = createSlice({
   },
 });
 
-export const { setAppStatus } = generalSlice.actions;
+export const { setAppStatus, setCurrentUser, triggerGetCurrentUser } = generalSlice.actions;
 
 export default generalSlice.reducer;

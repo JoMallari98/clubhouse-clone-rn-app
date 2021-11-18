@@ -7,18 +7,11 @@ export default styles = (size) =>
     container: {
       width: w(size),
       height: w(size),
-      borderRadius: w(size / 10),
-    },
-    containerBg: {
-      width: w(size),
-      height: w(size),
-      borderRadius: w(size / 10),
-      overflow: 'hidden',
+      borderRadius: w(size / 2),
+      backgroundColor: colors.palette.antiFlashWhite,
       justifyContent: 'center',
       alignItems: 'center',
-    },
-    camera: {
-      width: w(size / 2.5),
-      height: w(size / 2.5),
+      //borderWidth: 1,
+      //borderColor: colors.palette.black,
     },
   });

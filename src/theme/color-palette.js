@@ -12,4 +12,9 @@ export const colorPalette = {
   rollingStation: '#7B858C',
   gray: '#4A4E52',
   lightSlateGray: '#84909D',
+  lightGrayishBlue: '#E2E3E9',
+  grayishBlue: '#B9BDCB',
+  sunglow: '#FFC83D',
+  greyChateau: '#A7ADB2',
+  antiFlashWhite: '#F1F2F5',
 };

@@ -27,7 +27,12 @@ export default styles = (size) =>
       alignItems: 'flex-end',
       borderRadius: w(size / 4),
       overflow: 'hidden',
+
       //margin: 8,
+    },
+    mutedImageContainer: {
+      opacity: 0.5,
+      backgroundColor: colors.palette.black,
     },
     imageStyle: {
       resizeMode: 'cover',

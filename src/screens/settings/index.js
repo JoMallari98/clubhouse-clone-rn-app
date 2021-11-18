@@ -1,12 +1,15 @@
 import { useNavigation } from '@react-navigation/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, SafeAreaView, StatusBar, ScrollView } from 'react-native';
-import { AppBar, ToggleButton, BarButton } from '../../components';
+import { AppBar, ToggleButton, BarButton, Loader } from '../../components';
 import {
   selectChatRoomType,
   selectCommuteTypes,
   selectPoolSizes,
+  triggerGetGlobalSettings,
+  triggerGetUserChatSettings,
+  triggerUpdateUserChatSettings,
 } from '../../redux/settings/settingsSlice';
 
 import styles from './styles';
@@ -15,11 +18,18 @@ import { PRESET } from '../../constants';
 export const SettingsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { chatRoomTypes, commuteTypes, poolSizes, isValid } = useSelector(
-    (state) => state.settings
-  );
+  const { chatRoomTypes, commuteTypes, poolSizes, isValid, isLoading, defaultChatRoomSettings } =
+    useSelector((state) => state.settings);
 
-  console.log('chat room types : received : ', chatRoomTypes);
+  useEffect(() => {
+    dispatch(triggerGetGlobalSettings());
+  }, []);
+
+  useEffect(() => {
+    if (chatRoomTypes && chatRoomTypes.length > 0) {
+      dispatch(triggerGetUserChatSettings());
+    }
+  }, [chatRoomTypes]);
 
   const chatRoomType = () => {
     return (
@@ -30,10 +40,17 @@ export const SettingsScreen = () => {
             <ToggleButton
               key={index}
               id={item.id}
-              title={item.name}
+              title={item.value}
               style={index == 0 ? styles.advertizedToggleButton : styles.toggleButton}
-              isSelected={item.isSelected}
-              onPress={(id) => dispatch(selectChatRoomType(id))}
+              isSelected={item.id == defaultChatRoomSettings?.selectedChatRoomType}
+              onPress={(id) => {
+                dispatch(
+                  triggerUpdateUserChatSettings({
+                    ...defaultChatRoomSettings,
+                    selectedChatRoomType: id,
+                  })
+                );
+              }}
               size={index == 0 ? 57 : 38}
             />
           ))}
@@ -51,10 +68,17 @@ export const SettingsScreen = () => {
             <ToggleButton
               key={index}
               id={item.id}
-              title={item.name}
+              title={item.value}
               style={styles.toggleButton}
-              isSelected={item.isSelected}
-              onPress={(id) => dispatch(selectCommuteTypes(id))}
+              isSelected={item.id == defaultChatRoomSettings?.selectedEstCommuteType}
+              onPress={(id) =>
+                dispatch(
+                  triggerUpdateUserChatSettings({
+                    ...defaultChatRoomSettings,
+                    selectedEstCommuteType: id,
+                  })
+                )
+              }
             />
           ))}
         </View>
@@ -71,10 +95,17 @@ export const SettingsScreen = () => {
             <ToggleButton
               key={index}
               id={item.id}
-              title={item.name}
+              title={item.value}
               style={styles.toggleButton}
-              isSelected={item.isSelected}
-              onPress={(id) => dispatch(selectPoolSizes(id))}
+              isSelected={item.id == defaultChatRoomSettings?.selectedPreferredPoolSize}
+              onPress={(id) =>
+                dispatch(
+                  triggerUpdateUserChatSettings({
+                    ...defaultChatRoomSettings,
+                    selectedPreferredPoolSize: id,
+                  })
+                )
+              }
             />
           ))}
         </View>
@@ -105,6 +136,7 @@ export const SettingsScreen = () => {
               }}
             />
           </View>
+          <Loader isVisible={isLoading} />
         </View>
       </ScrollView>
     </SafeAreaView>

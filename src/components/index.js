@@ -1,3 +1,5 @@
+import { exp } from 'react-native/Libraries/Animated/Easing';
+
 export * from './bar-button';
 export * from './message';
 export * from './text-field';
@@ -8,3 +10,6 @@ export * from './toast';
 export * from './avatar';
 export * from './toggle-button';
 export * from './participant';
+export * from './friend-list-item';
+export * from './circle-button';
+export * from './gradient-bar-button';

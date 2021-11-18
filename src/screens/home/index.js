@@ -69,7 +69,12 @@ export const HomeScreen = () => {
       />
       <View style={styles.container}>
         <View style={styles.topContainer}>
-          <Avatar style={styles.avatar} source={PROFILE_ICON} size={120} />
+          <Avatar
+            style={styles.avatar}
+            source={PROFILE_ICON}
+            size={120}
+            onPress={() => navigation.navigate('Profile')}
+          />
 
           <Text style={styles.hello}>Hello JohnD</Text>
           <Text style={styles.welcome}>Welcome back!</Text>

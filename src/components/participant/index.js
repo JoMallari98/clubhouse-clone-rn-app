@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import styles from './styles';
 import { PRESET } from '../../constants';
@@ -18,11 +18,18 @@ export const Participant = ({
   size = w(80),
   ...props
 }) => {
-  const [mute, setMute] = useState(true);
-
+  const [mute, setMute] = useState(!data.isMicOn);
+  useEffect(() => {
+    setMute(!data.isMicOn);
+  }, [data?.isMicOn]);
   return (
     <View style={[style]}>
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity
+        onPress={() => {
+          onPress();
+          setMute(!mute);
+        }}
+      >
         <View style={[styles(size).container]}>
           {data.isSpeaking ? (
             <View style={[styles(size).speakingBorder]}>
@@ -35,23 +42,22 @@ export const Participant = ({
           ) : (
             <ImageBackground
               source={source}
-              style={[styles(size).imageContainer]}
+              style={[styles(size).imageContainer, mute ? styles(size).mutedImageContainer : null]}
               imageStyle={styles(size).imageStyle}
             ></ImageBackground>
           )}
-          {!data.isMicOn && !isCurrentUser && (
+          {mute && !isCurrentUser && (
             <TouchableOpacity
-              disabled={!isCurrentUser}
               onPress={() => {
                 onPressMic();
-                setMute(!data.isMicOn);
+                setMute(!mute);
               }}
             >
               <View style={styles(size).micContainer} onPress={onPressMic}>
                 <Image
                   resizeMode="contain"
                   style={styles(size).micImage}
-                  source={data?.isMicOn ? null : MUTED_MIC_ICON}
+                  source={mute ? MUTED_MIC_ICON : null}
                 />
               </View>
             </TouchableOpacity>
