@@ -4,25 +4,9 @@ import { exp } from 'react-native/Libraries/Animated/Easing';
 const initialState = {
   isLoading: false,
   error: null,
-  chatRoomTypes: [
-    // { id: 1, name: 'Just Chat', isSelected: false },
-    // { id: 2, name: 'Sports', isSelected: false },
-    // { id: 3, name: '1 on 1 advice', isSelected: true },
-    // { id: 4, name: 'Tourism', isSelected: false },
-    // { id: 5, name: 'Random', isSelected: false },
-  ],
-  commuteTypes: [
-    // { id: 1, name: '15 min', isSelected: true },
-    // { id: 2, name: '20 min', isSelected: false },
-    // { id: 3, name: '40 min', isSelected: false },
-    // { id: 4, name: '1 hr+', isSelected: false },
-  ],
-  poolSizes: [
-    // { id: 1, name: '4', isSelected: false },
-    // { id: 2, name: '6', isSelected: false },
-    // { id: 3, name: '8', isSelected: false },
-    // { id: 4, name: '10', isSelected: false },
-  ],
+  chatRoomTypes: [],
+  commuteTypes: [],
+  poolSizes: [],
   defaultChatRoomSettings: null,
   isValid: false,
 };
@@ -31,16 +15,22 @@ export const settingsSlice = createSlice({
   initialState,
   reducers: {
     selectChatRoomType: (state, action) => {
+      if (!state.defaultChatRoomSettings) state.defaultChatRoomSettings = {};
       state.defaultChatRoomSettings.selectedChatRoomType = action.payload;
       state.isValid = isAllSettingsSelected(state);
+      console.log('settings : --> ', state.defaultChatRoomSettings);
     },
     selectCommuteTypes: (state, action) => {
+      if (!state.defaultChatRoomSettings) state.defaultChatRoomSettings = {};
       state.defaultChatRoomSettings.selectedEstCommuteType = action.payload;
       state.isValid = isAllSettingsSelected(state);
+      console.log('settings : --> ', state.defaultChatRoomSettings);
     },
     selectPoolSizes: (state, action) => {
+      if (!state.defaultChatRoomSettings) state.defaultChatRoomSettings = {};
       state.defaultChatRoomSettings.selectedPreferredPoolSize = action.payload;
       state.isValid = isAllSettingsSelected(state);
+      console.log('settings : --> ', state.defaultChatRoomSettings);
     },
     triggerGetGlobalSettings: (state, action) => {
       state.isLoading = true;

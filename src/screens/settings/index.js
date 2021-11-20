@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/core';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, SafeAreaView, StatusBar, ScrollView } from 'react-native';
-import { AppBar, ToggleButton, BarButton, Loader } from '../../components';
+import { AppBar, ToggleButton, BarButton, Loader, OneOnOneConfirmation } from '../../components';
 import {
   selectChatRoomType,
   selectCommuteTypes,
@@ -20,16 +20,31 @@ export const SettingsScreen = () => {
   const dispatch = useDispatch();
   const { chatRoomTypes, commuteTypes, poolSizes, isValid, isLoading, defaultChatRoomSettings } =
     useSelector((state) => state.settings);
+  const [isVisibleOneOnOneConfirmation, setIsVisibleOneOnOneConfirmation] = useState(false);
 
   useEffect(() => {
     dispatch(triggerGetGlobalSettings());
   }, []);
-
+  console.log('default chat settings : ', defaultChatRoomSettings);
   useEffect(() => {
     if (chatRoomTypes && chatRoomTypes.length > 0) {
       dispatch(triggerGetUserChatSettings());
     }
   }, [chatRoomTypes]);
+
+  const onTapFindARoom = () => {
+    if (defaultChatRoomSettings.selectedChatRoomType == 3) {
+      setIsVisibleOneOnOneConfirmation(true);
+    } else {
+      dispatch(
+        triggerUpdateUserChatSettings({
+          ...defaultChatRoomSettings,
+          oneOnOneSelection: null,
+        })
+      );
+      navigation.navigate('Searching');
+    }
+  };
 
   const chatRoomType = () => {
     return (
@@ -44,12 +59,8 @@ export const SettingsScreen = () => {
               style={index == 0 ? styles.advertizedToggleButton : styles.toggleButton}
               isSelected={item.id == defaultChatRoomSettings?.selectedChatRoomType}
               onPress={(id) => {
-                dispatch(
-                  triggerUpdateUserChatSettings({
-                    ...defaultChatRoomSettings,
-                    selectedChatRoomType: id,
-                  })
-                );
+                console.log('select chat room type', id);
+                dispatch(selectChatRoomType(id));
               }}
               size={index == 0 ? 57 : 38}
             />
@@ -71,13 +82,14 @@ export const SettingsScreen = () => {
               title={item.value}
               style={styles.toggleButton}
               isSelected={item.id == defaultChatRoomSettings?.selectedEstCommuteType}
-              onPress={(id) =>
-                dispatch(
-                  triggerUpdateUserChatSettings({
-                    ...defaultChatRoomSettings,
-                    selectedEstCommuteType: id,
-                  })
-                )
+              onPress={
+                (id) => dispatch(selectCommuteTypes(id))
+                // dispatch(
+                //   triggerUpdateUserChatSettings({
+                //     ...defaultChatRoomSettings,
+                //     selectedEstCommuteType: id,
+                //   })
+                // )
               }
             />
           ))}
@@ -98,13 +110,14 @@ export const SettingsScreen = () => {
               title={item.value}
               style={styles.toggleButton}
               isSelected={item.id == defaultChatRoomSettings?.selectedPreferredPoolSize}
-              onPress={(id) =>
-                dispatch(
-                  triggerUpdateUserChatSettings({
-                    ...defaultChatRoomSettings,
-                    selectedPreferredPoolSize: id,
-                  })
-                )
+              onPress={
+                (id) => dispatch(selectPoolSizes(id))
+                // dispatch(
+                //   triggerUpdateUserChatSettings({
+                //     ...defaultChatRoomSettings,
+                //     selectedPreferredPoolSize: id,
+                //   })
+                // )
               }
             />
           ))}
@@ -131,12 +144,26 @@ export const SettingsScreen = () => {
               size={58}
               title="Find a Room"
               isDisabled={!isValid}
-              onPress={() => {
-                navigation.navigate('Searching');
-              }}
+              onPress={onTapFindARoom}
             />
           </View>
           <Loader isVisible={isLoading} />
+          <OneOnOneConfirmation
+            isVisible={isVisibleOneOnOneConfirmation}
+            data={{
+              title: 'I want a',
+              onTap: (selection) => {
+                setIsVisibleOneOnOneConfirmation(false);
+                dispatch(
+                  triggerUpdateUserChatSettings({
+                    ...defaultChatRoomSettings,
+                    oneOnOneSelection: selection,
+                  })
+                );
+                navigation.navigate('Searching');
+              },
+            }}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

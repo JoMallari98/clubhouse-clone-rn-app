@@ -11,5 +11,7 @@ export * from './avatar';
 export * from './toggle-button';
 export * from './participant';
 export * from './friend-list-item';
+export * from './friend-request-list-item';
 export * from './circle-button';
 export * from './gradient-bar-button';
+export * from './one-on-one-confirmation';

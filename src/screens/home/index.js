@@ -31,7 +31,7 @@ export const HomeScreen = () => {
   };
 
   const onTapFriends = () => {
-    console.log('on tap friends');
+    navigation.navigate('Friends');
   };
 
   const onTapSettings = () => {

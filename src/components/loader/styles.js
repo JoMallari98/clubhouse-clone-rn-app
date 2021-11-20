@@ -7,9 +7,22 @@ export default styles = StyleSheet.create({
     opacity: 0,
   },
   container: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center',
+  },
+  whiteOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // backgroundColor: colors.palette.black,
+    // opacity: 0.6,
   },
   title: {
     fontSize: fonts.sizes.h3,

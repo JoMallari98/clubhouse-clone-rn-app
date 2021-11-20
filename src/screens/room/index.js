@@ -16,18 +16,22 @@ export const RoomScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const { poolSizes } = useSelector((state) => state.settings);
+  const { poolSizes, defaultChatRoomSettings } = useSelector((state) => state.settings);
 
   const [muteRoom, setMuteRoom] = useState(false);
   const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
-    const selectedPoolSize = poolSizes.find((x) => x.isSelected === true);
-    const list = [{ isMicOn: true, isSpeaking: false, name: 'Adam' }];
-    for (let i = 0; i < parseInt(selectedPoolSize?.name) - 1; i++) {
-      list.push({ isMicOn: false, isSpeaking: false, name: 'Devon' });
+    const selectedPool = poolSizes.find(
+      (x) => x.id === defaultChatRoomSettings.selectedPreferredPoolSize
+    );
+    if (selectedPool) {
+      const list = [{ isMicOn: true, isSpeaking: false, name: 'Adam' }];
+      for (let i = 0; i < parseInt(selectedPool.value) - 1; i++) {
+        list.push({ isMicOn: false, isSpeaking: false, name: 'Devon' });
+      }
+      setParticipants(list);
     }
-    setParticipants(list);
   }, []);
 
   const getStyle = (index) => {
@@ -83,7 +87,7 @@ export const RoomScreen = () => {
           <BarButton
             style={styles().leaveRoom}
             preset={PRESET.INFO}
-            size={40}
+            size={58}
             title="Leave Room"
             isDisabled={false}
             onPress={() => {
@@ -92,7 +96,7 @@ export const RoomScreen = () => {
             }}
           />
         </View>
-        <View style={styles().tapToMuteContainer}>
+        {/*<View style={styles().tapToMuteContainer}>
           <LinkButton
             title={muteRoom ? 'Tap to Unmute' : 'Tap to Mute'}
             style={styles().tapToMute}
@@ -102,7 +106,7 @@ export const RoomScreen = () => {
               setMuteRoom(!muteRoom);
             }}
           />
-        </View>
+          </View>*/}
       </View>
     </SafeAreaView>
   );

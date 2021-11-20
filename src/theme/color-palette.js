@@ -17,4 +17,6 @@ export const colorPalette = {
   sunglow: '#FFC83D',
   greyChateau: '#A7ADB2',
   antiFlashWhite: '#F1F2F5',
+  seaShell: '#F0F1F3',
+  davysGray: '#50555E',
 };

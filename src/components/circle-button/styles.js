@@ -2,12 +2,12 @@ import { StyleSheet } from 'react-native';
 import { colors, fonts } from '../../theme';
 import { w, h } from '../../theme';
 
-export default styles = (size) =>
+export default styles = (size, radius) =>
   StyleSheet.create({
     container: {
       width: w(size),
       height: w(size),
-      borderRadius: w(size / 2),
+      borderRadius: radius ? w(radius) : w(size / 2),
       backgroundColor: colors.palette.antiFlashWhite,
       justifyContent: 'center',
       alignItems: 'center',

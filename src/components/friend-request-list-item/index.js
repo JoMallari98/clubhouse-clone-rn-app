@@ -2,12 +2,21 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
 import { PRESET } from '../../constants';
-import { CircleButton } from '..';
+import { BarButton, CircleButton } from '..';
+import { colors } from '../../theme';
 
 const PROFILE_ICON = require('../../../assets/profile.png');
 const STAR_ICON = require('../../../assets/star.png');
+const CLOSE_ICON = require('../../../assets/close.png');
 
-export const FriendListItem = ({ style, item, onTap, onTapChat, ...props }) => {
+export const FriendRequestListItem = ({
+  style,
+  item,
+  onTap,
+  onTapAccept,
+  onTapReject,
+  ...props
+}) => {
   return (
     <TouchableOpacity onPress={() => onTap(item)}>
       <View style={[styles.container, style]}>
@@ -19,7 +28,22 @@ export const FriendListItem = ({ style, item, onTap, onTapChat, ...props }) => {
             <Text style={styles.rating}>{item.rating}</Text>
           </View>
         </View>
-        <CircleButton onPress={() => onTapChat(item)} />
+        <View style={styles.acceptBtnContainer}>
+          <TouchableOpacity
+            onPress={(item) => {
+              onTapAccept(item);
+            }}
+          >
+            <Text style={styles.acceptBtnTitle}>Accept</Text>
+          </TouchableOpacity>
+        </View>
+        <CircleButton
+          radius={8}
+          source={CLOSE_ICON}
+          onPress={(item) => {
+            onTapReject(item);
+          }}
+        />
       </View>
     </TouchableOpacity>
   );
