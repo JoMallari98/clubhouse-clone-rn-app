@@ -15,3 +15,4 @@ export * from './friend-request-list-item';
 export * from './circle-button';
 export * from './gradient-bar-button';
 export * from './one-on-one-confirmation';
+export * from './image-picker-selector';

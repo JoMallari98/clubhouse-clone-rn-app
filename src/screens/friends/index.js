@@ -9,10 +9,10 @@ import {
   FriendListItem,
   FriendRequestListItem,
   GradientBarButton,
+  Loader,
 } from '../../components';
 import { DualTabButton } from '../../components/dual-tab-button';
-import { PRESET } from '../../constants';
-import { w } from '../../theme';
+import { triggerGetFriends } from '../../redux/friends/friendsSlice';
 
 import styles from './styles';
 
@@ -39,15 +39,24 @@ export const FriendsScreen = () => {
   const navigation = useNavigation();
 
   const { user } = useSelector((state) => state.general);
+  const { friends, friendRequests, isLoading } = useSelector((state) => state.friends);
+
   const [selectedIndex, setSelectedIndex] = useState(0);
-  useEffect(() => {}, [user]);
+  useEffect(() => {
+    console.log('user : ', user?.uid);
+    dispatch(triggerGetFriends(user?.uid));
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+  }, [isLoading]);
 
   const renderFriendRequestList = () => {
     return (
       <View style={styles.friendListContainer}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={DATA}
+          data={friendRequests}
           renderItem={renderFriendRequestListItem}
           keyExtractor={(item) => item.id}
         />
@@ -75,7 +84,7 @@ export const FriendsScreen = () => {
       <View style={styles.friendListContainer}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={DATA}
+          data={friends}
           renderItem={renderFriendListItem}
           keyExtractor={(item) => item.id}
         />
@@ -109,6 +118,7 @@ export const FriendsScreen = () => {
           <DualTabButton onPress={(id) => setSelectedIndex(id)} />
         </View>
       </View>
+      <Loader isVisible={isLoading} />
     </SafeAreaView>
   );
 };

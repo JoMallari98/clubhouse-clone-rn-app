@@ -22,7 +22,7 @@ export const FriendRequestListItem = ({
       <View style={[styles.container, style]}>
         <Image source={PROFILE_ICON} style={styles.profile} />
         <View style={styles.middleRow}>
-          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.name}>{item.fullName}</Text>
           <View style={styles.ratingRowContainer}>
             <Image style={styles.star} source={STAR_ICON} />
             <Text style={styles.rating}>{item.rating}</Text>

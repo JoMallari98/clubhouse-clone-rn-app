@@ -7,31 +7,31 @@ import styles from './styles';
 import { CircleButton } from '..';
 import { w } from '../../theme';
 
-const SPEAKER_ICON = require('../../../assets/speaker.png');
-const LISTENER_ICON = require('../../../assets/listener.png');
+const CAPTURE_ICON = require('../../../assets/capture.png');
+const FOLDER_ICON = require('../../../assets/folder.png');
 
-export const OneOnOneConfirmation = ({ isVisible, data }) => {
+export const ImagePickerSelector = ({ isVisible, data }) => {
   return (
     <Modal isVisible={isVisible}>
       <View style={[styles.container, data?.style]}>
-        <Text style={[styles.title, data?.titleStyle]}>{data?.title ?? 'Error'}</Text>
+        <Text style={[styles.title, data?.titleStyle]}>{data?.title ?? 'Select Avatar'}</Text>
         {/*<Text style={[styles.detail, data?.detailStyle]}>{data?.detail ?? ''}</Text>*/}
         <View style={styles.buttonContainer}>
           <View style={styles.listenerContainer}>
             <CircleButton
               size={w(64)}
-              source={LISTENER_ICON}
-              onPress={() => data?.onTap('listener')}
+              source={CAPTURE_ICON}
+              onPress={() => data?.onTap('camera')}
             />
-            <Text style={styles.buttonTitle}>Listener</Text>
+            <Text style={styles.buttonTitle}>Take Photo</Text>
           </View>
           <View style={styles.speakerContainer}>
             <CircleButton
               size={w(64)}
-              source={SPEAKER_ICON}
-              onPress={() => data?.onTap('speaker')}
+              source={FOLDER_ICON}
+              onPress={() => data?.onTap('library')}
             />
-            <Text style={styles.buttonTitle}>Speaker</Text>
+            <Text style={styles.buttonTitle}>Choose from Library</Text>
           </View>
         </View>
       </View>

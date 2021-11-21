@@ -8,6 +8,7 @@ import {
   onTriggerGetUserChatSettingsSaga,
   onTriggerUpdateUserChatSettingsSaga,
 } from './settings/settingsSagas';
+import { onTriggerGetFriendsSaga } from './friends/friendsSagas';
 
 function* rootSaga() {
   yield takeLeading('signUp/triggerSignUpSaga', onTriggerSignUpSaga);
@@ -16,6 +17,7 @@ function* rootSaga() {
   yield takeLeading('settings/triggerGetGlobalSettings', onTriggerGetGlobalSettingsSaga);
   yield takeLeading('settings/triggerGetUserChatSettings', onTriggerGetUserChatSettingsSaga);
   yield takeLeading('settings/triggerUpdateUserChatSettings', onTriggerUpdateUserChatSettingsSaga);
+  yield takeLeading('friends/triggerGetFriends', onTriggerGetFriendsSaga);
   yield takeLeading('counter/triggerSaga', onTriggerSaga);
 }
 

@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/core';
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, StatusBar, Image, FlatList } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   BarButton,
@@ -10,10 +11,13 @@ import {
   Message,
   FriendListItem,
   GradientBarButton,
+  ImagePickerSelector,
 } from '../../components';
 import { APP_STATUS, PRESET } from '../../constants';
 import { setAppStatus } from '../../redux/general/generalSlice';
 import { colors, w } from '../../theme';
+import { utils } from '@react-native-firebase/app';
+import storage from '@react-native-firebase/storage';
 
 import styles from './styles';
 
@@ -44,8 +48,32 @@ export const ProfileScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
+  const reference = storage().ref('black-t-shirt-sm.png');
+
+  const [isVisibleImagePickerSelector, setIsVisibleImagePickerSelector] = useState(false);
+
   const { user } = useSelector((state) => state.general);
   useEffect(() => {}, [user]);
+
+  const onImagePickerSelection = async (selection) => {
+    console.log('onImagePickerSelection ', selection);
+    if (selection == 'camera') {
+      const result = await launchCamera({});
+    } else {
+      const result = await launchImageLibrary({});
+      console.log('result : ', result);
+      // path to existing file on filesystem
+      const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/black-t-shirt-sm.png`;
+      console.log(pathToFile);
+      // uploads file
+      await reference.putFile(pathToFile);
+    }
+  };
+
+  const onTapCamera = () => {
+    console.log('on tap camera');
+    setIsVisibleImagePickerSelector(true);
+  };
 
   const renderPreviousChatsButton = () => {
     return (
@@ -118,7 +146,13 @@ export const ProfileScreen = () => {
       />
       <View style={styles.container}>
         <View style={styles.topContainer}>
-          <Avatar style={styles.avatar} source={PROFILE_ICON} isVisibleCamera={true} size={120} />
+          <Avatar
+            style={styles.avatar}
+            source={PROFILE_ICON}
+            isVisibleCamera={true}
+            size={120}
+            onPress={onTapCamera}
+          />
 
           <Text style={styles.name}>John Doe</Text>
           <Text style={styles.username}>@johnd</Text>
@@ -138,6 +172,15 @@ export const ProfileScreen = () => {
           />
         </View>
       </View>
+      <ImagePickerSelector
+        isVisible={isVisibleImagePickerSelector}
+        data={{
+          onTap: (selection) => {
+            setIsVisibleImagePickerSelector(false);
+            onImagePickerSelection(selection);
+          },
+        }}
+      />
     </SafeAreaView>
   );
 };

@@ -17,7 +17,11 @@ export const CircleButton = ({
   return (
     <View style={[styles(size, radius).container, style]}>
       <TouchableOpacity onPress={onPress}>
-        <Image source={source ?? SEND_ICON} resizeMode="contain" />
+        <Image
+          style={styles(size, radius).image}
+          source={source ?? SEND_ICON}
+          resizeMode="contain"
+        />
       </TouchableOpacity>
     </View>
   );
