@@ -1,7 +1,10 @@
 import { takeLeading } from 'redux-saga/effects';
 import { onTriggerSignUpSaga } from './signUp/signUpSagas';
 import { onTriggerSignInSaga } from './signIn/signInSagas';
-import { onTriggerGetCurrentUserSaga } from './general/generalSagas';
+import {
+  onTriggerGetCurrentUserSaga,
+  onTriggerUploadProfilePictureSaga,
+} from './general/generalSagas';
 import { onTriggerSaga } from './counter/counterSagas';
 import {
   onTriggerGetGlobalSettingsSaga,
@@ -14,6 +17,7 @@ function* rootSaga() {
   yield takeLeading('signUp/triggerSignUpSaga', onTriggerSignUpSaga);
   yield takeLeading('signIn/triggerSignInSaga', onTriggerSignInSaga);
   yield takeLeading('general/triggerGetCurrentUser', onTriggerGetCurrentUserSaga);
+  yield takeLeading('general/triggerUploadProfilePicture', onTriggerUploadProfilePictureSaga);
   yield takeLeading('settings/triggerGetGlobalSettings', onTriggerGetGlobalSettingsSaga);
   yield takeLeading('settings/triggerGetUserChatSettings', onTriggerGetUserChatSettingsSaga);
   yield takeLeading('settings/triggerUpdateUserChatSettings', onTriggerUpdateUserChatSettingsSaga);

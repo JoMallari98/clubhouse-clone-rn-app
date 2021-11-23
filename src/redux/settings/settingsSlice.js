@@ -18,19 +18,16 @@ export const settingsSlice = createSlice({
       if (!state.defaultChatRoomSettings) state.defaultChatRoomSettings = {};
       state.defaultChatRoomSettings.selectedChatRoomType = action.payload;
       state.isValid = isAllSettingsSelected(state);
-      console.log('settings : --> ', state.defaultChatRoomSettings);
     },
     selectCommuteTypes: (state, action) => {
       if (!state.defaultChatRoomSettings) state.defaultChatRoomSettings = {};
       state.defaultChatRoomSettings.selectedEstCommuteType = action.payload;
       state.isValid = isAllSettingsSelected(state);
-      console.log('settings : --> ', state.defaultChatRoomSettings);
     },
     selectPoolSizes: (state, action) => {
       if (!state.defaultChatRoomSettings) state.defaultChatRoomSettings = {};
       state.defaultChatRoomSettings.selectedPreferredPoolSize = action.payload;
       state.isValid = isAllSettingsSelected(state);
-      console.log('settings : --> ', state.defaultChatRoomSettings);
     },
     triggerGetGlobalSettings: (state, action) => {
       state.isLoading = true;
@@ -39,7 +36,6 @@ export const settingsSlice = createSlice({
       state.isLoading = false;
     },
     triggerGetGlobalSettingsSucceded: (state, action) => {
-      console.log('data in --> 0');
       state.isLoading = false;
 
       const modifiedChatRoomTypes = [];
@@ -68,7 +64,6 @@ export const settingsSlice = createSlice({
       state.isLoading = false;
     },
     triggerGetUserChatSettingsSucceeded: (state, action) => {
-      console.log('data in --> 1');
       state.isLoading = false;
       state.defaultChatRoomSettings = action.payload?.defaultChatRoomSettings;
     },
@@ -79,11 +74,9 @@ export const settingsSlice = createSlice({
       state.isLoading = false;
     },
     triggerUpdateUserChatSettingsSucceeded: (state, action) => {
-      console.log('data in --> 2');
       state.isLoading = false;
       state.defaultChatRoomSettings = action.payload;
       state.isValid = isAllSettingsSelected(state);
-      console.log(' triggerUpdateUserChatSettingsSucceeded ', action.payload);
     },
   },
 });

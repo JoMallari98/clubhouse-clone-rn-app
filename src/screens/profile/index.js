@@ -5,18 +5,17 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  BarButton,
   AppBar,
   Avatar,
-  Message,
   FriendListItem,
   GradientBarButton,
   ImagePickerSelector,
+  Loader,
+  showToast,
 } from '../../components';
-import { APP_STATUS, PRESET } from '../../constants';
-import { setAppStatus } from '../../redux/general/generalSlice';
-import { colors, w } from '../../theme';
-import { utils } from '@react-native-firebase/app';
+import { PRESET } from '../../constants';
+import { triggerUploadProfilePicture } from '../../redux/general/generalSlice';
+import { w } from '../../theme';
 import storage from '@react-native-firebase/storage';
 
 import styles from './styles';
@@ -48,25 +47,45 @@ export const ProfileScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const reference = storage().ref('black-t-shirt-sm.png');
+  // const reference = storage().ref('black-t-shirt-sm.png');
 
   const [isVisibleImagePickerSelector, setIsVisibleImagePickerSelector] = useState(false);
 
-  const { user } = useSelector((state) => state.general);
+  const { user, isUploadingProfilePicture, error, profileImageUrl, profileUser } = useSelector(
+    (state) => state.general
+  );
   useEffect(() => {}, [user]);
 
+  useEffect(() => {
+    if (isUploadingProfilePicture) return;
+    if (error) {
+      return showToast({ message: error });
+    }
+  }, [isUploadingProfilePicture]);
+
   const onImagePickerSelection = async (selection) => {
-    console.log('onImagePickerSelection ', selection);
-    if (selection == 'camera') {
-      const result = await launchCamera({});
-    } else {
-      const result = await launchImageLibrary({});
-      console.log('result : ', result);
-      // path to existing file on filesystem
-      const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/black-t-shirt-sm.png`;
-      console.log(pathToFile);
-      // uploads file
-      await reference.putFile(pathToFile);
+    try {
+      if (selection == 'camera') {
+        const result = await launchCamera({
+          maxWidth: 512,
+          maxHeight: 512,
+        });
+        if (result != null && result.assets != null && result.assets.length > 0) {
+          dispatch(triggerUploadProfilePicture({ uid: user?.uid, result }));
+        }
+      } else if (selection == 'library') {
+        const result = await launchImageLibrary({
+          maxWidth: 512,
+          maxHeight: 512,
+        });
+        if (result != null && result.assets != null && result.assets.length > 0) {
+          dispatch(triggerUploadProfilePicture({ uid: user?.uid, result, profileUser }));
+        }
+      }
+
+      setIsVisibleImagePickerSelector(false);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -148,7 +167,7 @@ export const ProfileScreen = () => {
         <View style={styles.topContainer}>
           <Avatar
             style={styles.avatar}
-            source={PROFILE_ICON}
+            source={profileUser?.imageUrl ? { uri: profileUser?.imageUrl } : PROFILE_ICON}
             isVisibleCamera={true}
             size={120}
             onPress={onTapCamera}
@@ -175,12 +194,10 @@ export const ProfileScreen = () => {
       <ImagePickerSelector
         isVisible={isVisibleImagePickerSelector}
         data={{
-          onTap: (selection) => {
-            setIsVisibleImagePickerSelector(false);
-            onImagePickerSelection(selection);
-          },
+          onTap: onImagePickerSelection,
         }}
       />
+      <Loader isVisible={isUploadingProfilePicture} />
     </SafeAreaView>
   );
 };

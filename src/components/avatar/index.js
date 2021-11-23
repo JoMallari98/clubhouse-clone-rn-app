@@ -19,14 +19,14 @@ export const Avatar = ({
       return (
         <ImageBackground
           source={source}
-          resizeMode="contain"
+          resizeMode="cover"
           style={[styles(size).containerBg, style]}
         >
           <Image source={ROUNDED_CAMERA} style={styles(size).camera} resizeMode="contain" />
         </ImageBackground>
       );
     } else {
-      return <Image source={source} resizeMode="contain" style={[styles(size).container, style]} />;
+      return <Image source={source} resizeMode="cover" style={[styles(size).container, style]} />;
     }
   };
 

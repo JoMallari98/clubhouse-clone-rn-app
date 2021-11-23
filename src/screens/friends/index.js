@@ -43,13 +43,14 @@ export const FriendsScreen = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   useEffect(() => {
-    console.log('user : ', user?.uid);
     dispatch(triggerGetFriends(user?.uid));
   }, []);
 
   useEffect(() => {
     if (isLoading) return;
   }, [isLoading]);
+
+  console.log('friends list : ', friends);
 
   const renderFriendRequestList = () => {
     return (

@@ -17,13 +17,9 @@ export const friendsSlice = createSlice({
     },
     triggerGetFriendsSucceded: (state, action) => {
       const { friends, users } = action.payload;
-      console.log(action.payload);
-
       const newFriendsList = [];
       const newFriendRequestList = [];
       friends.forEach((friend, index) => {
-        console.log(friend);
-
         const userData = users.filter((user) => {
           return friend?.id == user?.data()?.id;
         });
@@ -36,8 +32,6 @@ export const friendsSlice = createSlice({
       state.isLoading = false;
       state.friends = newFriendsList;
       state.friendRequests = newFriendRequestList;
-
-      console.log('data data  : ', state.friends, state.friendRequests);
     },
     triggerGetFriendsFailed: (state, action) => {
       state.isLoading = false;

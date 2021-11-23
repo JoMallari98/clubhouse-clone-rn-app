@@ -25,7 +25,6 @@ export const SettingsScreen = () => {
   useEffect(() => {
     dispatch(triggerGetGlobalSettings());
   }, []);
-  console.log('default chat settings : ', defaultChatRoomSettings);
   useEffect(() => {
     if (chatRoomTypes && chatRoomTypes.length > 0) {
       dispatch(triggerGetUserChatSettings());

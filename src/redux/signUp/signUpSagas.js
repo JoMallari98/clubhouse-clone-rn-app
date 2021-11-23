@@ -17,25 +17,25 @@ function signUp(payload) {
 }
 
 function createUser({ payload, result }) {
-  console.log('received payload : ', payload);
   return new Promise((resolve, reject) => {
+    const user = {
+      id: result?.user?.uid,
+      fullName: payload.fullName,
+      username: '@' + payload.fullName.replace(/\s+/g, '.')?.toLowerCase(),
+      email: payload.email,
+      defaultChatRoomSettings: {},
+      imageUrl: '',
+      rating: '0',
+      numberOfRatings: '0',
+      meetingStatus: 'available',
+      friends: [],
+    };
     firestore()
       .collection('users')
       .doc(result?.user?.uid)
-      .set({
-        id: result?.user?.uid,
-        fullName: payload.fullName,
-        username: '@' + payload.fullName.replace(/\s+/g, '.')?.toLowerCase(),
-        email: payload.email,
-        defaultChatRoomSettings: {},
-        imageUrl: '',
-        rating: '0',
-        numberOfRatings: '0',
-        meetingStatus: 'available',
-        friends: [],
-      })
+      .set(user)
       .then(() => {
-        resolve(true);
+        resolve(user);
       });
   });
 }
@@ -54,7 +54,8 @@ export function* onTriggerSignUpSaga(action) {
     if (userCreationResult) {
       // set user details to local storage
       StorageUtils.setObjectValue('@user', signUpResult?.user);
-      yield put(triggerSignUpSucceded(signUpResult));
+      StorageUtils.setObjectValue('@profileUser', userCreationResult);
+      yield put(triggerSignUpSucceded({ signUpResult, profileUser: userCreationResult }));
     } else {
       yield put(triggerSignUpFailed('User signup failed'));
     }

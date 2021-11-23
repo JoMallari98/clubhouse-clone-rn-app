@@ -18,10 +18,8 @@ export const HomeScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const { user, appStatus } = useSelector((state) => state.general);
-  useEffect(() => {
-    console.log('HOME SCREEN USER CHANGED ', user, appStatus);
-  }, [user]);
+  const { user, appStatus, profileUser } = useSelector((state) => state.general);
+  useEffect(() => {}, [user]);
 
   const [isVisibleStopWhileDriving, setIsVisibleStopWhileDriving] = useState(false);
 
@@ -42,6 +40,8 @@ export const HomeScreen = () => {
   const onTapStart = () => {
     setIsVisibleStopWhileDriving(true);
   };
+
+  console.log('profile user : home : ', profileUser);
 
   const richTitle = () => {
     return (
@@ -71,12 +71,12 @@ export const HomeScreen = () => {
         <View style={styles.topContainer}>
           <Avatar
             style={styles.avatar}
-            source={PROFILE_ICON}
+            source={profileUser?.imageUrl ? { uri: profileUser?.imageUrl } : PROFILE_ICON}
             size={120}
             onPress={() => navigation.navigate('Profile')}
           />
 
-          <Text style={styles.hello}>Hello JohnD</Text>
+          <Text style={styles.hello}>{profileUser?.fullName ?? 'USER NAME'}</Text>
           <Text style={styles.welcome}>Welcome back!</Text>
 
           <BarButton

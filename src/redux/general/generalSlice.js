@@ -5,8 +5,11 @@ import { triggerSignUpSucceded } from '../signUp/signUpSagas';
 const initialState = {
   appStatus: '',
   user: null,
+  profileUser: null,
   isLoading: false,
   error: null,
+  isUploadingProfilePicture: false,
+  profileImageUrl: null,
 };
 
 export const generalSlice = createSlice({
@@ -28,7 +31,8 @@ export const generalSlice = createSlice({
       return {
         ...state,
         isLoading: false,
-        user: action.payload,
+        user: action.payload?.user,
+        profileUser: action.payload?.profileUser,
       };
     },
     triggerGetCurrentUserFailed: (state, action) => {
@@ -38,23 +42,47 @@ export const generalSlice = createSlice({
         error: action.payload,
       };
     },
+    triggerUploadProfilePicture: (state) => {
+      state.isUploadingProfilePicture = true;
+      state.error = null;
+      //state.profileImageUrl=null;
+    },
+    triggerUploadProfilePictureSucceded: (state, action) => {
+      return {
+        ...state,
+        isUploadingProfilePicture: false,
+        profileUser: {
+          ...state.profileUser,
+          imageUrl: action.payload,
+        },
+      };
+    },
+    triggerUploadProfilePictureFailed: (state, action) => {
+      return {
+        ...state,
+        isUploadingProfilePicture: false,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(triggerSignInSucceded, (state, action) => {
       return {
         ...state,
-        user: action.payload?.user,
+        user: action.payload?.signInResult.user,
+        profileUser: action.payload?.profileUser,
       };
     }),
       builder.addCase(triggerSignUpSucceded, (state, action) => {
         return {
           ...state,
-          user: action.payload?.user,
+          user: action.payload?.signUpResult.user,
+          profileUser: action.payload?.profileUser,
         };
       });
   },
 });
 
-export const { setAppStatus, setCurrentUser, triggerGetCurrentUser } = generalSlice.actions;
+export const { setAppStatus, setCurrentUser, triggerGetCurrentUser, triggerUploadProfilePicture } =
+  generalSlice.actions;
 
 export default generalSlice.reducer;

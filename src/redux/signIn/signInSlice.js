@@ -17,7 +17,7 @@ export const signInSlice = createSlice({
     triggerSignInSucceded: (state, action) => {
       state.isLoading = false;
       state.error = null;
-      state.result = action.payload;
+      state.result = action.payload?.signInResult;
     },
     triggerSignInFailed: (state, action) => {
       state.isLoading = false;

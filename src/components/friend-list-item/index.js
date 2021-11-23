@@ -11,7 +11,10 @@ export const FriendListItem = ({ style, item, onTap, onTapChat, ...props }) => {
   return (
     <TouchableOpacity onPress={() => onTap(item)}>
       <View style={[styles.container, style]}>
-        <Image source={PROFILE_ICON} style={styles.profile} />
+        <Image
+          source={item?.imageUrl ? { uri: item?.imageUrl } : PROFILE_ICON}
+          style={styles.profile}
+        />
         <View style={styles.middleRow}>
           <Text style={styles.name}>{item.fullName}</Text>
           <View style={styles.ratingRowContainer}>

@@ -26,7 +26,6 @@ function getUsers() {
       .collection('users')
       .get()
       .then((documentSnapshot) => {
-        console.log('document users : ', documentSnapshot?.docs);
         resolve(documentSnapshot.docs);
       });
   });
