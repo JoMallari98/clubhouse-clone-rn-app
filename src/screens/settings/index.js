@@ -58,7 +58,6 @@ export const SettingsScreen = () => {
               style={index == 0 ? styles.advertizedToggleButton : styles.toggleButton}
               isSelected={item.id == defaultChatRoomSettings?.selectedChatRoomType}
               onPress={(id) => {
-                console.log('select chat room type', id);
                 dispatch(selectChatRoomType(id));
               }}
               size={index == 0 ? 57 : 38}

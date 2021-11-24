@@ -28,7 +28,7 @@ export const RoomScreen = () => {
     if (selectedPool) {
       const list = [{ isMicOn: true, isSpeaking: false, name: 'Adam' }];
       for (let i = 0; i < parseInt(selectedPool.value) - 1; i++) {
-        list.push({ isMicOn: false, isSpeaking: false, name: 'Devon' });
+        list.push({ isMicOn: true, isSpeaking: false, name: 'Devon' });
       }
       setParticipants(list);
     }

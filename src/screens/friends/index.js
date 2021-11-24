@@ -35,12 +35,16 @@ export const FriendsScreen = () => {
     isLoadingGetFriends,
     isLoadingSendFriendRequest,
     sendFriendRequestError,
+    sendFriendRequestSuccess,
     isLoadingCancelFriendRequest,
     cancelFriendRequestError,
+    cancelFriendRequestSuccess,
     isLoadingAcceptReceivedFriendRequest,
     acceptReceivedFriendRequestError,
+    acceptReceivedFriendRequestSuccess,
     isLoadingRejectReceivedFriendRequest,
     rejectReceivedFriendRequestError,
+    rejectReceivedFriendRequestSuccess,
   } = useSelector((state) => state.friends);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -55,31 +59,38 @@ export const FriendsScreen = () => {
   useEffect(() => {
     if (isLoadingSendFriendRequest) return;
     if (sendFriendRequestError) return showToast({ message: sendFriendRequestError });
-    dispatch(triggerGetFriends(user?.uid));
+    if (sendFriendRequestSuccess) {
+      dispatch(triggerGetFriends(user?.uid));
+    }
   }, [isLoadingSendFriendRequest]);
 
   useEffect(() => {
     if (isLoadingCancelFriendRequest) return;
     if (cancelFriendRequestError) return showToast({ message: cancelFriendRequestError });
-    dispatch(triggerGetFriends(user?.uid));
+    if (cancelFriendRequestSuccess) {
+      dispatch(triggerGetFriends(user?.uid));
+    }
   }, [isLoadingCancelFriendRequest]);
 
   useEffect(() => {
     if (isLoadingAcceptReceivedFriendRequest) return;
     if (acceptReceivedFriendRequestError)
       return showToast({ message: acceptReceivedFriendRequestError });
-    dispatch(triggerGetFriends(user?.uid));
+    if (acceptReceivedFriendRequestSuccess) {
+      dispatch(triggerGetFriends(user?.uid));
+    }
   }, [isLoadingAcceptReceivedFriendRequest]);
 
   useEffect(() => {
     if (isLoadingRejectReceivedFriendRequest) return;
     if (rejectReceivedFriendRequestError)
       return showToast({ message: rejectReceivedFriendRequestError });
-    dispatch(triggerGetFriends(user?.uid));
+    if (rejectReceivedFriendRequestSuccess) {
+      dispatch(triggerGetFriends(user?.uid));
+    }
   }, [isLoadingRejectReceivedFriendRequest]);
 
   const renderFriendRequestList = () => {
-    console.log('received friend requests : ', receivedFriendRequests);
     return (
       <View style={styles.friendListContainer}>
         <FlatList
@@ -93,7 +104,6 @@ export const FriendsScreen = () => {
   };
 
   const renderFriendRequestListItem = ({ item }) => {
-    console.log('render friend requ : ', item);
     return (
       <FriendRequestListItem
         item={item}
@@ -101,7 +111,6 @@ export const FriendsScreen = () => {
           navigation.navigate('ThirdPartyProfile', { item, uid: user?.uid });
         }}
         onTapAccept={(item) => {
-          console.log('on tap accept : ', item);
           dispatch(triggerAcceptReceivedFriendRequest({ item, uid: user?.uid }));
         }}
         onTapReject={(item) => {

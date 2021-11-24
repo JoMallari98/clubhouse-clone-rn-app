@@ -33,15 +33,12 @@ export const HomeScreen = () => {
   };
 
   const onTapSettings = () => {
-    console.log('on tap settings');
     navigation.navigate('Settings');
   };
 
   const onTapStart = () => {
     setIsVisibleStopWhileDriving(true);
   };
-
-  console.log('profile user : home : ', profileUser);
 
   const richTitle = () => {
     return (

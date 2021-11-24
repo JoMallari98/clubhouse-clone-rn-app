@@ -101,7 +101,6 @@ export const ProfileScreen = () => {
   };
 
   const onTapCamera = () => {
-    console.log('on tap camera');
     setIsVisibleImagePickerSelector(true);
   };
 

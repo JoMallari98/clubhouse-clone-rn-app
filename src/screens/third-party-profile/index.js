@@ -1,9 +1,9 @@
 import { useNavigation, useRoute } from '@react-navigation/core';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, StatusBar, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useSelector } from 'react-redux';
-import { AppBar, Avatar } from '../../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppBar, Avatar, Loader, showToast } from '../../components';
 
 import styles from './styles';
 
@@ -12,22 +12,117 @@ const RATING_ICON = require('../../../assets/rating.png');
 const CHAT_CIRCLE = require('../../../assets/chat_circle.png');
 const ADD_FRIEND = require('../../../assets/add_friend.png');
 
+import {
+  triggerGetFriends,
+  triggerSendFriendRequest,
+  triggerCancelFriendRequest,
+  triggerAcceptReceivedFriendRequest,
+  triggerRejectReceivedFriendRequest,
+} from '../../redux/friends/friendsSlice';
+
 export const ThirdPartyProfileScreen = () => {
   // const {isFrien} = useParams()
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const route = useRoute();
 
   const { item, uid } = route.params;
 
   const { user } = useSelector((state) => state.general);
-  useEffect(() => {}, [user]);
+  const {
+    friends,
+    allUsers,
+    suggestedFriends,
+    receivedFriendRequests,
+    isLoadingGetFriends,
+    getFriendsError,
+    getFriendsSuccess,
+    isLoadingSendFriendRequest,
+    sendFriendRequestError,
+    sendFriendRequestSuccess,
+    isLoadingCancelFriendRequest,
+    cancelFriendRequestError,
+    cancelFriendRequestSuccess,
+    isLoadingAcceptReceivedFriendRequest,
+    acceptReceivedFriendRequestError,
+    acceptReceivedFriendRequestSuccess,
+    isLoadingRejectReceivedFriendRequest,
+    rejectReceivedFriendRequestError,
+    rejectReceivedFriendRequestSuccess,
+  } = useSelector((state) => state.friends);
+
+  const [frienStatus, setFriendStatus] = useState(null);
+
+  useEffect(() => {
+    updateFriendStatus();
+  }, [item]);
+
+  useEffect(() => {
+    if (isLoadingGetFriends) return;
+    if (getFriendsError) return;
+    if (getFriendsSuccess) {
+      updateFriendStatus();
+    }
+  }, [isLoadingGetFriends]);
+
+  useEffect(() => {
+    if (isLoadingSendFriendRequest) return;
+    if (sendFriendRequestError) return showToast({ message: sendFriendRequestError });
+    if (sendFriendRequestSuccess) {
+      dispatch(triggerGetFriends(user?.uid));
+    }
+  }, [isLoadingSendFriendRequest]);
+
+  useEffect(() => {
+    if (isLoadingCancelFriendRequest) return;
+    if (cancelFriendRequestError) return showToast({ message: cancelFriendRequestError });
+    if (cancelFriendRequestSuccess) {
+      dispatch(triggerGetFriends(user?.uid));
+    }
+  }, [isLoadingCancelFriendRequest]);
+
+  useEffect(() => {
+    if (isLoadingAcceptReceivedFriendRequest) return;
+    if (acceptReceivedFriendRequestError)
+      return showToast({ message: acceptReceivedFriendRequestError });
+    if (acceptReceivedFriendRequestSuccess) {
+      dispatch(triggerGetFriends(user?.uid));
+    }
+  }, [isLoadingAcceptReceivedFriendRequest]);
+
+  useEffect(() => {
+    if (isLoadingRejectReceivedFriendRequest) return;
+    if (rejectReceivedFriendRequestError)
+      return showToast({ message: rejectReceivedFriendRequestError });
+    if (rejectReceivedFriendRequestSuccess) {
+      dispatch(triggerGetFriends(user?.uid));
+    }
+  }, [isLoadingRejectReceivedFriendRequest]);
+
+  const updateFriendStatus = () => {
+    if (item != null) {
+      const releventFriend = allUsers?.filter((el) => {
+        return el.id == item?.id;
+      });
+      const friend = releventFriend[0]?.data()?.friends?.filter((el) => {
+        return el.id == uid;
+      });
+      if (friend != null && friend?.length > 0) {
+        if (friend[0].status == 'received_requests') {
+          setFriendStatus('sent_requests');
+        } else if (friend[0].status == 'sent_requests') {
+          setFriendStatus('received_requests');
+        } else {
+          setFriendStatus(friend[0].status);
+        }
+      } else {
+        setFriendStatus(null);
+      }
+    }
+  };
 
   const renderPreviousChatsButton = () => {
-    const friend = item?.friends?.filter((el) => {
-      return el.id == uid;
-    });
-    console.log('render friend : )))', friend);
-    if (friend[0]?.status == 'accepted') {
+    if (frienStatus == 'accepted') {
       return (
         <View style={styles.previousChatButtonContainer}>
           <TouchableOpacity style={styles.previousChatButtonInnerContainer}>
@@ -36,16 +131,19 @@ export const ThirdPartyProfileScreen = () => {
           </TouchableOpacity>
         </View>
       );
-    } else if (friend[0]?.status == 'received_requests') {
+    } else if (frienStatus == 'received_requests') {
       return (
         <View style={styles.previousChatButtonContainer}>
-          <TouchableOpacity style={styles.previousChatButtonInnerContainer}>
+          <TouchableOpacity
+            style={styles.previousChatButtonInnerContainer}
+            onPress={() => dispatch(triggerAcceptReceivedFriendRequest({ item, uid: user?.uid }))}
+          >
             <Image source={ADD_FRIEND} style={styles.infoButtonIcon} />
             <Text style={styles.previousChatButtonTitle}>Accept</Text>
           </TouchableOpacity>
         </View>
       );
-    } else if (friend[0]?.status == 'sent_requests') {
+    } else if (frienStatus == 'sent_requests') {
       return (
         <View style={styles.previousChatButtonContainer}>
           <TouchableOpacity style={styles.previousChatButtonInnerContainer}>
@@ -57,7 +155,10 @@ export const ThirdPartyProfileScreen = () => {
     } else {
       return (
         <View style={styles.previousChatButtonContainer}>
-          <TouchableOpacity style={styles.previousChatButtonInnerContainer}>
+          <TouchableOpacity
+            style={styles.previousChatButtonInnerContainer}
+            onPress={() => dispatch(triggerSendFriendRequest({ item, uid: user?.uid }))}
+          >
             <Image source={ADD_FRIEND} style={styles.infoButtonIcon} />
             <Text style={styles.previousChatButtonTitle}>Add Friend</Text>
           </TouchableOpacity>
@@ -111,6 +212,15 @@ export const ThirdPartyProfileScreen = () => {
           {renderInfoButtonContainer()}
         </View>
       </View>
+      <Loader
+        isVisible={
+          isLoadingGetFriends ||
+          isLoadingSendFriendRequest ||
+          isLoadingCancelFriendRequest ||
+          isLoadingAcceptReceivedFriendRequest ||
+          isLoadingRejectReceivedFriendRequest
+        }
+      />
     </SafeAreaView>
   );
 };

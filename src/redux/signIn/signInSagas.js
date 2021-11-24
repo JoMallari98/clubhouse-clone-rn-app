@@ -9,7 +9,6 @@ export const triggerSignInSucceded = createAction('signIn/triggerSignInSucceded'
 export const triggerSignInFailed = createAction('signIn/triggerSignInFailed');
 
 function signIn(payload) {
-  console.log('sign in', payload);
   try {
     return auth().signInWithEmailAndPassword(payload.email, payload.password);
   } catch (error) {

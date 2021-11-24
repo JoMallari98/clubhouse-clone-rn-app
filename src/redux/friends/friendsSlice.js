@@ -3,18 +3,24 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   isLoadingGetFriends: false,
   getFriendsError: null,
+  getFriendsSuccess: null,
   friends: [],
   receivedFriendRequests: [],
   sentFriendRequests: [],
   suggestedFriends: [],
+  allUsers: [],
   isLoadingSendFriendRequest: false,
   sendFriendRequestError: null,
+  sendFriendRequestSuccess: null,
   isLoadingCancelFriendRequest: false,
   cancelFriendRequestError: null,
+  cancelFriendRequestSuccess: null,
   isLoadingAcceptReceivedFriendRequest: false,
   acceptReceivedFriendRequestError: null,
+  acceptReceivedFriendRequestSuccess: null,
   isLoadingRejectReceivedFriendRequest: false,
   rejectReceivedFriendRequestError: null,
+  rejectReceivedFriendRequestSuccess: null,
 };
 
 export const friendsSlice = createSlice({
@@ -24,6 +30,15 @@ export const friendsSlice = createSlice({
     triggerGetFriends: (state) => {
       state.isLoadingGetFriends = true;
       state.getFriendsError = null;
+      state.getFriendsSuccess = null;
+      (sendFriendRequestError = null),
+        (sendFriendRequestSuccess = null),
+        (cancelFriendRequestError = null),
+        (cancelFriendRequestSuccess = null),
+        (acceptReceivedFriendRequestError = null),
+        (acceptReceivedFriendRequestSuccess = null),
+        (rejectReceivedFriendRequestError = null),
+        (rejectReceivedFriendRequestSuccess = null);
     },
     triggerGetFriendsSucceded: (state, action) => {
       const { friends, users, uid } = action.payload;
@@ -65,15 +80,20 @@ export const friendsSlice = createSlice({
       state.receivedFriendRequests = receivedFriendRequestList;
       state.sentFriendRequests = sentFriendRequestList;
       state.suggestedFriends = suggestedFriendList;
+      state.allUsers = users;
+      state.getFriendsSuccess = 'Friends are loaded successfully';
     },
     triggerGetFriendsFailed: (state, action) => {
       state.isLoadingGetFriends = false;
     },
     triggerSendFriendRequest: (state) => {
       state.isLoadingSendFriendRequest = true;
+      state.sendFriendRequestError = null;
+      state.sendFriendRequestSuccess = null;
     },
     triggerSendFriendRequestSucceded: (state, action) => {
       state.isLoadingSendFriendRequest = false;
+      state.sendFriendRequestSuccess = 'Friend request is sent successfully';
     },
     triggerSendFriendRequestFailed: (state, action) => {
       state.isLoadingSendFriendRequest = false;
@@ -82,9 +102,12 @@ export const friendsSlice = createSlice({
 
     triggerCancelFriendRequest: (state) => {
       state.isLoadingCancelFriendRequest = true;
+      state.cancelFriendRequestError = null;
+      state.cancelFriendRequestSuccess = null;
     },
     triggerCancelFriendRequestSucceded: (state, action) => {
       state.isLoadingCancelFriendRequest = false;
+      state.cancelFriendRequestSuccess = 'Friend request is cancelled successfully';
     },
     triggerCancelFriendRequestFailed: (state, action) => {
       state.isLoadingCancelFriendRequest = false;
@@ -93,9 +116,12 @@ export const friendsSlice = createSlice({
 
     triggerAcceptReceivedFriendRequest: (state) => {
       state.isLoadingAcceptReceivedFriendRequest = true;
+      state.acceptReceivedFriendRequestError = null;
+      state.acceptReceivedFriendRequestSuccess = null;
     },
     triggerAcceptReceivedFriendRequestSucceded: (state, action) => {
       state.isLoadingAcceptReceivedFriendRequest = false;
+      state.acceptReceivedFriendRequestSuccess = 'Accept received friend request';
     },
     triggerAcceptReceivedFriendRequestFailed: (state, action) => {
       state.isLoadingAcceptReceivedFriendRequest = false;
@@ -104,9 +130,12 @@ export const friendsSlice = createSlice({
 
     triggerRejectReceivedFriendRequest: (state) => {
       state.isLoadingRejectReceivedFriendRequest = true;
+      state.rejectReceivedFriendRequestError = null;
+      state.rejectReceivedFriendRequestSuccess = null;
     },
     triggerRejectReceivedFriendRequestSucceded: (state, action) => {
       state.isLoadingRejectReceivedFriendRequest = false;
+      state.rejectReceivedFriendRequestSuccess = 'Friend request rejected successfully';
     },
     triggerRejectReceivedFriendRequestFailed: (state, action) => {
       state.isLoadingRejectReceivedFriendRequest = false;
