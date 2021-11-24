@@ -19,6 +19,7 @@ import { w } from '../../theme';
 import storage from '@react-native-firebase/storage';
 
 import styles from './styles';
+import { triggerGetFriends } from '../../redux/friends/friendsSlice';
 
 const EDIT_ICON = require('../../../assets/edit.png');
 const PROFILE_ICON = require('../../../assets/profile.png');
@@ -54,7 +55,13 @@ export const ProfileScreen = () => {
   const { user, isUploadingProfilePicture, error, profileImageUrl, profileUser } = useSelector(
     (state) => state.general
   );
-  useEffect(() => {}, [user]);
+  const { friends, friendRequests, isLoadingGetFriends } = useSelector((state) => state.friends);
+
+  useEffect(() => {
+    dispatch(triggerGetFriends(user?.uid));
+  }, []);
+
+  //useEffect(() => {}, [user]);
 
   useEffect(() => {
     if (isUploadingProfilePicture) return;
@@ -62,6 +69,10 @@ export const ProfileScreen = () => {
       return showToast({ message: error });
     }
   }, [isUploadingProfilePicture]);
+
+  useEffect(() => {
+    if (isLoadingGetFriends) return;
+  }, [isLoadingGetFriends]);
 
   const onImagePickerSelection = async (selection) => {
     try {
@@ -110,8 +121,8 @@ export const ProfileScreen = () => {
       <View style={styles.ratingButtonContainer}>
         <TouchableOpacity style={styles.ratingButtonInnerContainer}>
           <Image source={RATING_ICON} style={styles.infoButtonIcon} />
-          <Text style={styles.rateTitle}>4.9</Text>
-          <Text style={styles.rateCountTitle}>(59)</Text>
+          <Text style={styles.rateTitle}>{profileUser?.numberOfRatings ?? 0}</Text>
+          <Text style={styles.rateCountTitle}>({profileUser?.rating ?? 0})</Text>
         </TouchableOpacity>
       </View>
     );
@@ -131,11 +142,11 @@ export const ProfileScreen = () => {
       <View style={styles.friendListContainer}>
         <View style={styles.friendListTitleContainer}>
           <Text style={styles.handIcon}>&#129305; </Text>
-          <Text style={styles.friendListTitle}>FRIENDS (129)</Text>
+          <Text style={styles.friendListTitle}>FRIENDS ({friends.length ?? 0})</Text>
         </View>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={DATA}
+          data={friends}
           renderItem={renderFriendListItem}
           keyExtractor={(item) => item.id}
         />
@@ -147,6 +158,9 @@ export const ProfileScreen = () => {
     return (
       <FriendListItem
         item={item}
+        onTap={() => {
+          navigation.navigate('ThirdPartyProfile', { item, uid: user?.uid });
+        }}
         onTapChat={(item) => {
           console.log('on tap chat item ', item.name);
         }}
@@ -173,8 +187,8 @@ export const ProfileScreen = () => {
             onPress={onTapCamera}
           />
 
-          <Text style={styles.name}>John Doe</Text>
-          <Text style={styles.username}>@johnd</Text>
+          <Text style={styles.name}>{profileUser?.fullName}</Text>
+          <Text style={styles.username}>{profileUser?.username}</Text>
 
           {renderInfoButtonContainer()}
 
@@ -197,7 +211,7 @@ export const ProfileScreen = () => {
           onTap: onImagePickerSelection,
         }}
       />
-      <Loader isVisible={isUploadingProfilePicture} />
+      <Loader isVisible={isUploadingProfilePicture || isLoadingGetFriends} />
     </SafeAreaView>
   );
 };

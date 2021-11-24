@@ -35,4 +35,8 @@ export default styles = StyleSheet.create({
     color: colors.palette.sunglow,
     marginLeft: w(10),
   },
+  send: {
+    width: w(32 * (3 / 6)),
+    height: w(32 * (3 / 6)),
+  },
 });

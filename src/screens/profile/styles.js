@@ -138,4 +138,8 @@ export default styles = StyleSheet.create({
     //marginBottom: w(24),
     //width: '80%',
   },
+  send: {
+    width: w(32 * (3 / 6)),
+    height: w(32 * (3 / 6)),
+  },
 });

@@ -15,7 +15,7 @@ export default styles = (size, radius) =>
       //borderColor: colors.palette.black,
     },
     image: {
-      width: w((size * 4) / 5),
-      height: w((size * 4) / 5),
+      width: w(size * (4 / 5)),
+      height: w(size * (4 / 5)),
     },
   });

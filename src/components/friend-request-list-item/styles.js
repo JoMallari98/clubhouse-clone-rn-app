@@ -48,4 +48,8 @@ export default styles = StyleSheet.create({
     paddingHorizontal: w(16),
     paddingVertical: w(8),
   },
+  closeIcon: {
+    width: w(32 * (2 / 5)),
+    height: w(32 * (2 / 5)),
+  },
 });

@@ -11,7 +11,13 @@ import {
   onTriggerGetUserChatSettingsSaga,
   onTriggerUpdateUserChatSettingsSaga,
 } from './settings/settingsSagas';
-import { onTriggerGetFriendsSaga } from './friends/friendsSagas';
+import {
+  onTriggerAcceptReceivedFriendRequestSaga,
+  onTriggerCancelFriendRequestSaga,
+  onTriggerGetFriendsSaga,
+  onTriggerRejectReceivedFriendRequestSaga,
+  onTriggerSendFriendRequestSaga,
+} from './friends/friendsSagas';
 
 function* rootSaga() {
   yield takeLeading('signUp/triggerSignUpSaga', onTriggerSignUpSaga);
@@ -22,6 +28,16 @@ function* rootSaga() {
   yield takeLeading('settings/triggerGetUserChatSettings', onTriggerGetUserChatSettingsSaga);
   yield takeLeading('settings/triggerUpdateUserChatSettings', onTriggerUpdateUserChatSettingsSaga);
   yield takeLeading('friends/triggerGetFriends', onTriggerGetFriendsSaga);
+  yield takeLeading('friends/triggerSendFriendRequest', onTriggerSendFriendRequestSaga);
+  yield takeLeading('friends/triggerCancelFriendRequest', onTriggerCancelFriendRequestSaga);
+  yield takeLeading(
+    'friends/triggerAcceptReceivedFriendRequest',
+    onTriggerAcceptReceivedFriendRequestSaga
+  );
+  yield takeLeading(
+    'friends/triggerRejectReceivedFriendRequest',
+    onTriggerRejectReceivedFriendRequestSaga
+  );
   yield takeLeading('counter/triggerSaga', onTriggerSaga);
 }
 

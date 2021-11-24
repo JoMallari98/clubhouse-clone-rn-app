@@ -10,36 +10,38 @@ import {
   FriendRequestListItem,
   GradientBarButton,
   Loader,
+  showToast,
 } from '../../components';
 import { DualTabButton } from '../../components/dual-tab-button';
-import { triggerGetFriends } from '../../redux/friends/friendsSlice';
+import {
+  triggerGetFriends,
+  triggerSendFriendRequest,
+  triggerCancelFriendRequest,
+  triggerAcceptReceivedFriendRequest,
+  triggerRejectReceivedFriendRequest,
+} from '../../redux/friends/friendsSlice';
 
 import styles from './styles';
-
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    name: 'Adam Joy',
-    rating: '4.9',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    name: 'Root Miller',
-    rating: '4.8',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    name: 'Tim cook',
-    rating: '5.0',
-  },
-];
 
 export const FriendsScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const { user } = useSelector((state) => state.general);
-  const { friends, friendRequests, isLoading } = useSelector((state) => state.friends);
+  const {
+    friends,
+    suggestedFriends,
+    receivedFriendRequests,
+    isLoadingGetFriends,
+    isLoadingSendFriendRequest,
+    sendFriendRequestError,
+    isLoadingCancelFriendRequest,
+    cancelFriendRequestError,
+    isLoadingAcceptReceivedFriendRequest,
+    acceptReceivedFriendRequestError,
+    isLoadingRejectReceivedFriendRequest,
+    rejectReceivedFriendRequestError,
+  } = useSelector((state) => state.friends);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   useEffect(() => {
@@ -47,35 +49,64 @@ export const FriendsScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoading) return;
-  }, [isLoading]);
+    if (isLoadingGetFriends) return;
+  }, [isLoadingGetFriends]);
 
-  console.log('friends list : ', friends);
+  useEffect(() => {
+    if (isLoadingSendFriendRequest) return;
+    if (sendFriendRequestError) return showToast({ message: sendFriendRequestError });
+    dispatch(triggerGetFriends(user?.uid));
+  }, [isLoadingSendFriendRequest]);
+
+  useEffect(() => {
+    if (isLoadingCancelFriendRequest) return;
+    if (cancelFriendRequestError) return showToast({ message: cancelFriendRequestError });
+    dispatch(triggerGetFriends(user?.uid));
+  }, [isLoadingCancelFriendRequest]);
+
+  useEffect(() => {
+    if (isLoadingAcceptReceivedFriendRequest) return;
+    if (acceptReceivedFriendRequestError)
+      return showToast({ message: acceptReceivedFriendRequestError });
+    dispatch(triggerGetFriends(user?.uid));
+  }, [isLoadingAcceptReceivedFriendRequest]);
+
+  useEffect(() => {
+    if (isLoadingRejectReceivedFriendRequest) return;
+    if (rejectReceivedFriendRequestError)
+      return showToast({ message: rejectReceivedFriendRequestError });
+    dispatch(triggerGetFriends(user?.uid));
+  }, [isLoadingRejectReceivedFriendRequest]);
 
   const renderFriendRequestList = () => {
+    console.log('received friend requests : ', receivedFriendRequests);
     return (
       <View style={styles.friendListContainer}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={friendRequests}
+          data={receivedFriendRequests}
           renderItem={renderFriendRequestListItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item?.id}
         />
       </View>
     );
   };
 
   const renderFriendRequestListItem = ({ item }) => {
+    console.log('render friend requ : ', item);
     return (
       <FriendRequestListItem
         item={item}
         onTap={(item) => {
-          navigation.navigate('ThirdPartyProfile');
+          navigation.navigate('ThirdPartyProfile', { item, uid: user?.uid });
         }}
         onTapAccept={(item) => {
-          console.log('on tap chat item ', item.name);
+          console.log('on tap accept : ', item);
+          dispatch(triggerAcceptReceivedFriendRequest({ item, uid: user?.uid }));
         }}
-        onTapReject={(item) => {}}
+        onTapReject={(item) => {
+          dispatch(triggerRejectReceivedFriendRequest({ item, uid: user?.uid }));
+        }}
       />
     );
   };
@@ -85,7 +116,7 @@ export const FriendsScreen = () => {
       <View style={styles.friendListContainer}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={friends}
+          data={suggestedFriends}
           renderItem={renderFriendListItem}
           keyExtractor={(item) => item.id}
         />
@@ -94,17 +125,34 @@ export const FriendsScreen = () => {
   };
 
   const renderFriendListItem = ({ item }) => {
-    return (
-      <FriendListItem
-        item={item}
-        onTap={(item) => {
-          navigation.navigate('ThirdPartyProfile');
-        }}
-        onTapChat={(item) => {
-          console.log('on tap chat item ', item.name);
-        }}
-      />
-    );
+    if (item.isPendingRequest) {
+      return (
+        <FriendRequestListItem
+          item={item}
+          onTapAcceptTitle="Pending"
+          isDisableAcceptBtn={true}
+          onTap={(item) => {
+            navigation.navigate('ThirdPartyProfile', { item, uid: user?.uid });
+          }}
+          onTapAccept={(item) => {}}
+          onTapReject={(item) => {
+            dispatch(triggerCancelFriendRequest({ item, uid: user?.uid }));
+          }}
+        />
+      );
+    } else {
+      return (
+        <FriendListItem
+          item={item}
+          onTap={(item) => {
+            navigation.navigate('ThirdPartyProfile', { item, uid: user?.uid });
+          }}
+          onTapChat={(item) => {
+            dispatch(triggerSendFriendRequest({ item, uid: user?.uid }));
+          }}
+        />
+      );
+    }
   };
 
   return (
@@ -119,7 +167,15 @@ export const FriendsScreen = () => {
           <DualTabButton onPress={(id) => setSelectedIndex(id)} />
         </View>
       </View>
-      <Loader isVisible={isLoading} />
+      <Loader
+        isVisible={
+          isLoadingGetFriends ||
+          isLoadingSendFriendRequest ||
+          isLoadingCancelFriendRequest ||
+          isLoadingAcceptReceivedFriendRequest ||
+          isLoadingRejectReceivedFriendRequest
+        }
+      />
     </SafeAreaView>
   );
 };
