@@ -3,6 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {
   FriendsScreen,
   HomeScreen,
+  PreviousChatDetailScreen,
+  PreviousChatsScreen,
   ProfileScreen,
   RoomScreen,
   SearchingScreen,
@@ -29,6 +31,8 @@ export const MainNavigator = () => {
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="ThirdPartyProfile" component={ThirdPartyProfileScreen} />
       <Stack.Screen name="Friends" component={FriendsScreen} />
+      <Stack.Screen name="PreviousChats" component={PreviousChatsScreen} />
+      <Stack.Screen name="PreviousChatDetail" component={PreviousChatDetailScreen} />
     </Stack.Navigator>
   );
 };

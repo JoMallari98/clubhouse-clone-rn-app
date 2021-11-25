@@ -107,7 +107,12 @@ export const ProfileScreen = () => {
   const renderPreviousChatsButton = () => {
     return (
       <View style={styles.previousChatButtonContainer}>
-        <TouchableOpacity style={styles.previousChatButtonInnerContainer}>
+        <TouchableOpacity
+          style={styles.previousChatButtonInnerContainer}
+          onPress={() => {
+            navigation.navigate('PreviousChats');
+          }}
+        >
           <Image source={CHAT_HISTORY_ICON} style={styles.infoButtonIcon} />
           <Text style={styles.previousChatButtonTitle}>Previous Chats</Text>
         </TouchableOpacity>
