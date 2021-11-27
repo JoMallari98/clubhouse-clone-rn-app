@@ -6,6 +6,7 @@ import {
   PreviousChatDetailScreen,
   PreviousChatsScreen,
   ProfileScreen,
+  ReportProfileScreen,
   RoomScreen,
   SearchingScreen,
   SettingsScreen,
@@ -33,6 +34,7 @@ export const MainNavigator = () => {
       <Stack.Screen name="Friends" component={FriendsScreen} />
       <Stack.Screen name="PreviousChats" component={PreviousChatsScreen} />
       <Stack.Screen name="PreviousChatDetail" component={PreviousChatDetailScreen} />
+      <Stack.Screen name="ReportProfile" component={ReportProfileScreen} />
     </Stack.Navigator>
   );
 };

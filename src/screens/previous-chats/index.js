@@ -53,10 +53,14 @@ export const PreviousChatsScreen = () => {
   const { user } = useSelector((state) => state.general);
 
   const renderChatRoomItem = ({ item }) => {
-    return  <ChatRoomListItem item={item} onTap={(item) => {
-      navigation.navigate('PreviousChatDetail', { item, uid: user?.uid });
-      }} />;
-    
+    return (
+      <ChatRoomListItem
+        item={item}
+        onTap={(item) => {
+          navigation.navigate('PreviousChatDetail', { item, uid: user?.uid });
+        }}
+      />
+    );
   };
 
   return (

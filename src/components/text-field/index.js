@@ -19,6 +19,8 @@ export const TF = ({
   errorStyle,
   isSecured = false,
   keyboardType = 'default',
+  multiline = false,
+  numberOfLines = 1,
   ...props
 }) => {
   return (
@@ -34,6 +36,8 @@ export const TF = ({
         autoCapitalize="none"
         autoCorrect={false}
         keyboardType={keyboardType}
+        multiline={multiline}
+        numberOfLines={numberOfLines}
       />
       {error && <Text style={[styles.error, errorStyle]}>{error}</Text>}
     </View>

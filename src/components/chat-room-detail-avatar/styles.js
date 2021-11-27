@@ -8,7 +8,7 @@ export default styles = (size) =>
       // width: '30%',
       width: w(size),
       height: w(size),
-      borderRadius: w(size / 4)
+      borderRadius: w(size / 4),
     },
     containerBg: {
       width: w(size),
@@ -18,16 +18,16 @@ export default styles = (size) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
-    name:{
+    name: {
       fontFamily: fonts.primary,
       fontSize: w(12),
       fontWeight: 'bold',
-      marginTop: w(8)
+      marginTop: w(8),
     },
     ratingRowContainer: {
       flexDirection: 'row',
       marginTop: w(8),
-      marginBottom: w(16)
+      marginBottom: w(16),
     },
     star: {},
     rating: {
@@ -37,11 +37,11 @@ export default styles = (size) =>
       color: colors.palette.sunglow,
       marginLeft: w(8),
     },
-    rateButtonTitle:{
+    rateButtonTitle: {
       fontFamily: fonts.primary,
       fontSize: w(12),
       fontWeight: '100',
       color: colors.palette.cyanBlue,
-      marginTop: w(8)
-    }
+      marginTop: w(8),
+    },
   });

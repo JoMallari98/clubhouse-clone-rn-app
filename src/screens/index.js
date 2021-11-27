@@ -15,3 +15,4 @@ export * from './friends';
 export * from './third-party-profile';
 export * from './previous-chats';
 export * from './previous-chat-detail';
+export * from './report-profile';

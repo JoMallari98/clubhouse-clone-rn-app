@@ -17,3 +17,5 @@ export * from './gradient-bar-button';
 export * from './one-on-one-confirmation';
 export * from './image-picker-selector';
 export * from './chat-room-detail-avatar';
+export * from './rating-modal';
+export * from './horizontal-seperator';

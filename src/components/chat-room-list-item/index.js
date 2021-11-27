@@ -1,5 +1,5 @@
 import React from 'react';
-import {useRoute} from '@react-navigation/core'
+import { useRoute } from '@react-navigation/core';
 import { View, Text, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import styles from './styles';

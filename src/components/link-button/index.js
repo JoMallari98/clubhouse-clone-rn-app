@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import styles from './styles';
 import { PRESET } from '../../constants';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export const LinkButton = ({
   style,

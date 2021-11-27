@@ -12,6 +12,6 @@ export default styles = StyleSheet.create({
   },
   row: {
     flex: 1,
-    justifyContent: "space-around"
-}
+    justifyContent: 'space-around',
+  },
 });
