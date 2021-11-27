@@ -45,7 +45,8 @@ export const CarouselScreen = () => {
       if (!slideData[index - 1]) {
         clearInterval(interval);
         if (user) {
-          navigation.navigate('MainNavigator');
+          //navigation.navigate('MainNavigator');
+          navigation.navigate('BottomNavigator');
         } else {
           navigation.navigate('Onboarding');
         }

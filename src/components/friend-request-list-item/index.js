@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
 import { PRESET } from '../../constants';
-import { BarButton, CircleButton } from '..';
+import { BarButton, CircleButton } from '../';
 import { colors, w } from '../../theme';
 
 const PROFILE_ICON = require('../../../assets/profile.png');

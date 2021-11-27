@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Image, View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import { LinkButton } from '..';
+import { LinkButton } from '../';
 import styles from './styles';
 
 const PROFILE_ICON = require('../../../assets/profile.png');

@@ -30,7 +30,8 @@ export const SignUpScreen = () => {
       return showToast({ message: error });
     }
     if (result != null) {
-      navigation.navigate('MainNavigator');
+      //navigation.navigate('MainNavigator');
+      navigation.navigate('BottomNavigator');
     }
   }, [isLoading]);
 

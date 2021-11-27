@@ -3,7 +3,7 @@ import { View, Text, Dimensions, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 import { AirbnbRating, Rating } from 'react-native-ratings';
-import { Avatar, BarButton, HorizontalSeperator } from '..';
+import { Avatar, BarButton, HorizontalSeperator } from '../';
 import { PRESET } from '../../constants';
 import styles from './styles';
 import { w } from '../../theme';
@@ -12,7 +12,6 @@ import { useNavigation } from '@react-navigation/core';
 
 const STAR_ANIMATION = require('../../../assets/animation/star-pop.json');
 const PROFILE_ICON = require('../../../assets/profile.png');
-const RATING_ICON = require('../../../assets/rating.png');
 const CHAT_CIRCLE = require('../../../assets/chat_circle.png');
 
 export const RatingModal = ({ isVisible, item, onTapClose, onTapRate, onTapReport, style }) => {
@@ -59,6 +58,7 @@ export const RatingModal = ({ isVisible, item, onTapClose, onTapRate, onTapRepor
               setIsVisibleRatedAnimatin(true);
               setTimeout(() => {
                 onTapRate({ item, rating: starRating });
+                setIsVisibleRatedAnimatin(false);
               }, 2000);
             }}
           />
@@ -72,8 +72,8 @@ export const RatingModal = ({ isVisible, item, onTapClose, onTapRate, onTapRepor
             source={STAR_ANIMATION}
             autoPlay
             style={{
-              width: w(80),
-              height: w(80),
+              width: w(140),
+              height: w(140),
             }}
           />
         </>

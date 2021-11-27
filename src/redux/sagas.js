@@ -1,6 +1,6 @@
 import { takeLeading } from 'redux-saga/effects';
 import { onTriggerSignUpSaga } from './signUp/signUpSagas';
-import { onTriggerSignInSaga } from './signIn/signInSagas';
+import { onTriggerSignInSaga, onTriggerSignOutSaga } from './signIn/signInSagas';
 import {
   onTriggerGetCurrentUserSaga,
   onTriggerUploadProfilePictureSaga,
@@ -22,6 +22,7 @@ import {
 function* rootSaga() {
   yield takeLeading('signUp/triggerSignUpSaga', onTriggerSignUpSaga);
   yield takeLeading('signIn/triggerSignInSaga', onTriggerSignInSaga);
+  yield takeLeading('signIn/triggerSignOutSaga', onTriggerSignOutSaga);
   yield takeLeading('general/triggerGetCurrentUser', onTriggerGetCurrentUserSaga);
   yield takeLeading('general/triggerUploadProfilePicture', onTriggerUploadProfilePictureSaga);
   yield takeLeading('settings/triggerGetGlobalSettings', onTriggerGetGlobalSettingsSaga);

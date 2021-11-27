@@ -21,6 +21,7 @@ export const TF = ({
   keyboardType = 'default',
   multiline = false,
   numberOfLines = 1,
+  editable = true,
   ...props
 }) => {
   return (
@@ -38,6 +39,7 @@ export const TF = ({
         keyboardType={keyboardType}
         multiline={multiline}
         numberOfLines={numberOfLines}
+        editable={editable}
       />
       {error && <Text style={[styles.error, errorStyle]}>{error}</Text>}
     </View>

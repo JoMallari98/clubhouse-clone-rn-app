@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 import { BarButton } from '../bar-button';
 import { PRESET } from '../../constants';
 import styles from './styles';
-import { CircleButton } from '..';
+import { CircleButton } from '../';
 import { w } from '../../theme';
 
 const SPEAKER_ICON = require('../../../assets/speaker.png');

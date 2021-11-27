@@ -19,3 +19,4 @@ export * from './image-picker-selector';
 export * from './chat-room-detail-avatar';
 export * from './rating-modal';
 export * from './horizontal-seperator';
+export * from './confirmation-message';

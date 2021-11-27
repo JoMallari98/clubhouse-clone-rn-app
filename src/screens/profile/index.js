@@ -175,12 +175,7 @@ export const ProfileScreen = () => {
   return (
     <SafeAreaView style={styles.screen}>
       <StatusBar />
-      <AppBar
-        title="Account"
-        rightIcon={EDIT_ICON}
-        rightIconStyles={styles.appBarIcon}
-        onPressRightIcon={() => {}}
-      />
+      <AppBar title="Account" />
       <View style={styles.container}>
         <View style={styles.topContainer}>
           <Avatar

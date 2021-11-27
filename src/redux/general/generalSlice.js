@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { triggerSignInSucceded } from '../signIn/signInSagas';
-import { triggerSignUpSucceded } from '../signUp/signUpSagas';
+import { triggerSignInSucceded, triggerSignOutSucceded } from '../signIn/signInSagas';
+import { triggerSignUpSucceded } from '../signUp/signUpSagas'
 
 const initialState = {
   appStatus: '',
@@ -78,11 +78,24 @@ export const generalSlice = createSlice({
           user: action.payload?.signUpResult.user,
           profileUser: action.payload?.profileUser,
         };
-      });
+      }),
+      builder.addCase(triggerSignOutSucceded, (state, action) => {
+        return {
+          ...state,
+          user: null,
+          profileUser: null
+        };
+      })
+      ;
   },
 });
 
-export const { setAppStatus, setCurrentUser, triggerGetCurrentUser, triggerUploadProfilePicture } =
-  generalSlice.actions;
+export const {
+  setAppStatus,
+  setCurrentUser,
+  triggerGetCurrentUser,
+  triggerUploadProfilePicture,
+  //triggerResetAuth,
+} = generalSlice.actions;
 
 export default generalSlice.reducer;

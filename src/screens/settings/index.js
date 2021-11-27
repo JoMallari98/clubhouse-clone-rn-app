@@ -1,127 +1,42 @@
 import { useNavigation } from '@react-navigation/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, SafeAreaView, StatusBar, ScrollView } from 'react-native';
-import { AppBar, ToggleButton, BarButton, Loader, OneOnOneConfirmation } from '../../components';
-import {
-  selectChatRoomType,
-  selectCommuteTypes,
-  selectPoolSizes,
-  triggerGetGlobalSettings,
-  triggerGetUserChatSettings,
-  triggerUpdateUserChatSettings,
-} from '../../redux/settings/settingsSlice';
+import { AppBar, ConfirmationMessage, Loader, TF, ToggleButton } from '../../components';
+import { triggerSignOutSaga } from '../../redux/signIn/signInSlice';
+import { triggerResetAuth } from '../../redux/general/generalSlice';
 
 import styles from './styles';
-import { PRESET } from '../../constants';
 
 export const SettingsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { chatRoomTypes, commuteTypes, poolSizes, isValid, isLoading, defaultChatRoomSettings } =
-    useSelector((state) => state.settings);
-  const [isVisibleOneOnOneConfirmation, setIsVisibleOneOnOneConfirmation] = useState(false);
+
+  const { user, appStatus, profileUser } = useSelector((state) => state.general);
+  const { isSignOutLoading, signOutError, signOutSuccess } = useSelector((state) => state.signIn);
+
+  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [isVisibleLogoutConfirmation, setIsVisibleLogoutConfirmation] = useState(false);
 
   useEffect(() => {
-    dispatch(triggerGetGlobalSettings());
-  }, []);
+    setFullName(profileUser?.fullName);
+    setUsername(profileUser?.username);
+    setEmail(profileUser?.email);
+  }, [profileUser]);
+
+  console.log(isSignOutLoading, signOutSuccess, signOutError);
   useEffect(() => {
-    if (chatRoomTypes && chatRoomTypes.length > 0) {
-      dispatch(triggerGetUserChatSettings());
-    }
-  }, [chatRoomTypes]);
+    console.log(isSignOutLoading, signOutSuccess, signOutError);
+    if (isSignOutLoading) return;
+    if (signOutError) return showToast({ message: signOutError });
+    console.log('is sign out success ',isSignOutLoading)
+    //if ( signOutSuccess) return dispatch(triggerResetAuth())
+  }, [isSignOutLoading]);
 
-  const onTapFindARoom = () => {
-    if (defaultChatRoomSettings.selectedChatRoomType == 3) {
-      setIsVisibleOneOnOneConfirmation(true);
-    } else {
-      dispatch(
-        triggerUpdateUserChatSettings({
-          ...defaultChatRoomSettings,
-          oneOnOneSelection: null,
-        })
-      );
-      navigation.navigate('Searching');
-    }
-  };
-
-  const chatRoomType = () => {
-    return (
-      <View style={[styles.sectionContainer, styles.chatRoomContainer]}>
-        <Text style={styles.sectionTitle}>Chat Room Type</Text>
-        <View style={styles.toggleContainer}>
-          {chatRoomTypes?.map((item, index) => (
-            <ToggleButton
-              key={index}
-              id={item.id}
-              title={item.value}
-              style={index == 0 ? styles.advertizedToggleButton : styles.toggleButton}
-              isSelected={item.id == defaultChatRoomSettings?.selectedChatRoomType}
-              onPress={(id) => {
-                dispatch(selectChatRoomType(id));
-              }}
-              size={index == 0 ? 57 : 38}
-            />
-          ))}
-        </View>
-      </View>
-    );
-  };
-
-  const commuteType = () => {
-    return (
-      <View style={[styles.sectionContainer, styles.commuteTypeContainer]}>
-        <Text style={styles.sectionTitle}>Commute Time</Text>
-        <View style={styles.toggleContainer}>
-          {commuteTypes.map((item, index) => (
-            <ToggleButton
-              key={index}
-              id={item.id}
-              title={item.value}
-              style={styles.toggleButton}
-              isSelected={item.id == defaultChatRoomSettings?.selectedEstCommuteType}
-              onPress={
-                (id) => dispatch(selectCommuteTypes(id))
-                // dispatch(
-                //   triggerUpdateUserChatSettings({
-                //     ...defaultChatRoomSettings,
-                //     selectedEstCommuteType: id,
-                //   })
-                // )
-              }
-            />
-          ))}
-        </View>
-      </View>
-    );
-  };
-
-  const poolSize = () => {
-    return (
-      <View style={[styles.sectionContainer, styles.poolSizeContainer]}>
-        <Text style={styles.sectionTitle}>Pool Size</Text>
-        <View style={styles.toggleContainer}>
-          {poolSizes.map((item, index) => (
-            <ToggleButton
-              key={index}
-              id={item.id}
-              title={item.value}
-              style={styles.toggleButton}
-              isSelected={item.id == defaultChatRoomSettings?.selectedPreferredPoolSize}
-              onPress={
-                (id) => dispatch(selectPoolSizes(id))
-                // dispatch(
-                //   triggerUpdateUserChatSettings({
-                //     ...defaultChatRoomSettings,
-                //     selectedPreferredPoolSize: id,
-                //   })
-                // )
-              }
-            />
-          ))}
-        </View>
-      </View>
-    );
+  const signOut = () => {
+    dispatch(triggerSignOutSaga());
   };
 
   return (
@@ -131,38 +46,70 @@ export const SettingsScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.container}>
           <View style={styles.topContainer}>
-            {chatRoomType()}
-            {commuteType()}
-            {poolSize()}
-          </View>
-          <View style={styles.bottomContainer}>
-            <BarButton
-              style={styles.findARoom}
-              preset={PRESET.PRIMARY}
-              size={58}
-              title="Find a Room"
-              isDisabled={!isValid}
-              onPress={onTapFindARoom}
+            <TF
+              initialValue={fullName}
+              style={styles.emailContainer}
+              label="Full Name"
+              placeholder="John Do"
+              setText={(text) => setFullName(text)}
+            />
+            <TF
+              initialValue={username}
+              style={styles.emailContainer}
+              label="Alias"
+              placeholder="@johndo"
+              setText={(text) => setUsername(text)}
+            />
+            <TF
+              initialValue={email}
+              style={styles.emailContainer}
+              label="Email"
+              placeholder="johndoe@gmail.com"
+              setText={(text) => setEmail(text)}
+              keyboardType="email-address"
+              editable={false}
+            />
+
+            <ToggleButton
+              key={0}
+              id={'0'}
+              title="Change Password"
+              onPress={(id) => {}}
+              style={styles.toggleButton}
+            />
+
+            <ToggleButton
+              key={1}
+              id={'1'}
+              title="Delete Account"
+              onPress={(id) => {}}
+              style={styles.toggleButton}
+            />
+
+            <ToggleButton
+              key={2}
+              id={'2'}
+              title="Logout"
+              onPress={(id) => setIsVisibleLogoutConfirmation(true)}
+              style={styles.toggleButton}
             />
           </View>
-          <Loader isVisible={isLoading} />
-          <OneOnOneConfirmation
-            isVisible={isVisibleOneOnOneConfirmation}
-            data={{
-              title: 'I want a',
-              onTap: (selection) => {
-                setIsVisibleOneOnOneConfirmation(false);
-                dispatch(
-                  triggerUpdateUserChatSettings({
-                    ...defaultChatRoomSettings,
-                    oneOnOneSelection: selection,
-                  })
-                );
-                navigation.navigate('Searching');
-              },
-            }}
-          />
+          <View style={styles.bottomContainer}></View>
+          <Loader />
         </View>
+        <ConfirmationMessage
+          isVisible={isVisibleLogoutConfirmation}
+          title="WARNING!"
+          detail="Are you sure? do you want to logout?"
+          onTapNegative={() => {
+            setIsVisibleLogoutConfirmation(false);
+          }}
+          onTapPositive={() => {
+            setIsVisibleLogoutConfirmation(false);
+            signOut();
+          }}
+        />
+        <Loader isVisible={isSignOutLoading} />
       </ScrollView>
     </SafeAreaView>
   );

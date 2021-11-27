@@ -26,7 +26,8 @@ export const LoginScreen = () => {
       return showToast({ message: error });
     }
     if (result != null) {
-      navigation.navigate('MainNavigator');
+      //navigation.navigate('MainNavigator');
+      //navigation.navigate('BottomNavigator');
     }
   }, [isLoading]);
 

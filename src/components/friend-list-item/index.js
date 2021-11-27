@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
 import { PRESET } from '../../constants';
-import { CircleButton } from '..';
+import { CircleButton } from '../';
 
 const PROFILE_ICON = require('../../../assets/profile.png');
 const STAR_ICON = require('../../../assets/star.png');

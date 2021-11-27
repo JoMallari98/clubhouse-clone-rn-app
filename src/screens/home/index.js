@@ -33,7 +33,7 @@ export const HomeScreen = () => {
   };
 
   const onTapSettings = () => {
-    navigation.navigate('Settings');
+    navigation.navigate('ChatRoomSettings');
   };
 
   const onTapStart = () => {
@@ -70,7 +70,7 @@ export const HomeScreen = () => {
             style={styles.avatar}
             source={profileUser?.imageUrl ? { uri: profileUser?.imageUrl } : PROFILE_ICON}
             size={120}
-            onPress={() => navigation.navigate('Profile')}
+            onPress={() => navigation.navigate('AccountNavigator')}
           />
 
           <Text style={styles.hello}>{profileUser?.fullName ?? 'USER NAME'}</Text>
@@ -105,7 +105,7 @@ export const HomeScreen = () => {
           detail: 'Do not use while driving',
           onTap: () => {
             setIsVisibleStopWhileDriving(false);
-            navigation.navigate('Settings');
+            navigation.navigate('ChatRoomSettings');
           },
         }}
       />

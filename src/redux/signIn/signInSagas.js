@@ -4,6 +4,10 @@ import auth from '@react-native-firebase/auth';
 import { StorageUtils } from '../../utils/storage';
 import firestore from '@react-native-firebase/firestore';
 
+/*********************************************************
+ * SIGN IN - START
+ *********************************************************/
+
 export const triggerSignInSucceded = createAction('signIn/triggerSignInSucceded');
 
 export const triggerSignInFailed = createAction('signIn/triggerSignInFailed');
@@ -52,3 +56,32 @@ export function* onTriggerSignInSaga(action) {
     yield put(triggerSignInFailed(message));
   }
 }
+
+/*********************************************************
+ * SIGN IN - END
+ *********************************************************/
+
+/*********************************************************
+ * SIGN OUT - START
+ *********************************************************/
+
+export const triggerSignOutSucceded = createAction('signIn/triggerSignOutSucceded');
+
+export const triggerSignOutFailed = createAction('signIn/triggerSignOutFailed');
+
+export function* onTriggerSignOutSaga(action) {
+  try {
+    console.log('trigger sign out')
+    StorageUtils.setObjectValue('@user', null);
+    StorageUtils.setObjectValue('@profileUser', null);
+    yield put(triggerSignOutSucceded({}));
+  } catch (error) {
+    console.log(error);
+    let message = 'User sign out is not success. Please try again';
+    yield put(triggerSignOutFailed(message));
+  }
+}
+
+/*********************************************************
+ * SIGN OUT - END
+ *********************************************************/
