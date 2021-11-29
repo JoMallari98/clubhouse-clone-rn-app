@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { triggerSignInSucceded, triggerSignOutSucceded } from '../signIn/signInSagas';
-import { triggerSignUpSucceded } from '../signUp/signUpSagas'
+import { triggerSignUpSucceded } from '../signUp/signUpSagas';
 
 const initialState = {
   appStatus: '',
@@ -83,10 +83,9 @@ export const generalSlice = createSlice({
         return {
           ...state,
           user: null,
-          profileUser: null
+          profileUser: null,
         };
-      })
-      ;
+      });
   },
 });
 

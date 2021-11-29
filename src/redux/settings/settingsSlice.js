@@ -3,7 +3,9 @@ import { exp } from 'react-native/Libraries/Animated/Easing';
 
 const initialState = {
   isLoading: false,
+  isLoadingGetUserChatSettings: false,
   error: null,
+  getUserChatSettingsError: null,
   chatRoomTypes: [],
   commuteTypes: [],
   poolSizes: [],
@@ -58,13 +60,13 @@ export const settingsSlice = createSlice({
       });
     },
     triggerGetUserChatSettings: (state, action) => {
-      state.isLoading = true;
+      state.isLoadingGetUserChatSettings = true;
     },
     triggerGetUserChatSettingsFailed: (state, action) => {
-      state.isLoading = false;
+      state.isLoadingGetUserChatSettings = false;
     },
     triggerGetUserChatSettingsSucceeded: (state, action) => {
-      state.isLoading = false;
+      state.isLoadingGetUserChatSettings = false;
       state.defaultChatRoomSettings = action.payload?.defaultChatRoomSettings;
     },
     triggerUpdateUserChatSettings: (state, action) => {

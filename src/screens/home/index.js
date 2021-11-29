@@ -2,31 +2,34 @@ import { useNavigation } from '@react-navigation/core';
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, StatusBar } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { BarButton, AppBar, Avatar, Message } from '../../components';
-import { APP_STATUS, PRESET } from '../../constants';
-import { setAppStatus } from '../../redux/general/generalSlice';
-import { w } from '../../theme';
+import { BarButton, AppBar, Avatar, Message, Loader, showToast } from '../../components';
+import { PRESET } from '../../constants';
+import { triggerGetUserChatSettings } from '../../redux/settings/settingsSlice';
 
 import styles from './styles';
 
 const FRIENDS_ICON = require('../../../assets/friends.png');
-const SETTINGS_ICON = require('../../../assets/settings.png');
+const SETTINGS_ICON = require('../../../assets/preset_settings.png');
 const PROFILE_ICON = require('../../../assets/profile.png');
-const PLUS_ICON = require('../../../assets/plus.png');
 
 export const HomeScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const { user, appStatus, profileUser } = useSelector((state) => state.general);
-  useEffect(() => {}, [user]);
+  const { user, profileUser } = useSelector((state) => state.general);
+  const { defaultChatRoomSettings, isLoadingGetUserChatSettings, getUserChatSettingsError } =
+    useSelector((state) => state.settings);
 
   const [isVisibleStopWhileDriving, setIsVisibleStopWhileDriving] = useState(false);
 
-  const onTapSignOut = () => {
-    //dispatch(signOut());
-    dispatch(setAppStatus(APP_STATUS.NEW_USER));
-  };
+  useEffect(() => {
+    dispatch(triggerGetUserChatSettings(user?.uid ?? null));
+  }, []);
+
+  useEffect(() => {
+    if (isLoadingGetUserChatSettings) return;
+    if (getUserChatSettingsError) return showToast({ message: getUserChatSettingsError });
+  }, [isLoadingGetUserChatSettings]);
 
   const onTapFriends = () => {
     navigation.navigate('Friends');
@@ -38,6 +41,21 @@ export const HomeScreen = () => {
 
   const onTapStart = () => {
     setIsVisibleStopWhileDriving(true);
+  };
+
+  const onTapStartConfirmation = () => {
+    setIsVisibleStopWhileDriving(false);
+    console.log('default chat room settings  ', defaultChatRoomSettings);
+    if (
+      defaultChatRoomSettings != null &&
+      defaultChatRoomSettings?.selectedChatRoomType != null &&
+      defaultChatRoomSettings?.selectedEstCommuteType != null &&
+      defaultChatRoomSettings?.selectedPreferredPoolSize != null
+    ) {
+      navigation.navigate('Searching');
+    } else {
+      navigation.navigate('ChatRoomSettings');
+    }
   };
 
   const richTitle = () => {
@@ -103,12 +121,10 @@ export const HomeScreen = () => {
         data={{
           title: 'STOP!',
           detail: 'Do not use while driving',
-          onTap: () => {
-            setIsVisibleStopWhileDriving(false);
-            navigation.navigate('ChatRoomSettings');
-          },
+          onTap: onTapStartConfirmation,
         }}
       />
+      <Loader isVisible={isLoadingGetUserChatSettings} />
     </SafeAreaView>
   );
 };

@@ -17,7 +17,7 @@ export const ConfirmationMessage = ({
   negativePreset,
   positivePreset,
   onTapNegative,
-  onTapPositive
+  onTapPositive,
 }) => {
   return (
     <Modal isVisible={isVisible}>
@@ -25,28 +25,27 @@ export const ConfirmationMessage = ({
         <Text style={[styles.title, titleStyle]}>{title ?? 'Error'}</Text>
         <Text style={[styles.detail, detailStyle]}>{detail ?? ''}</Text>
         <View style={styles.buttonContainer}>
-        <BarButton
-        title={negativeButtonTitle ?? 'NO'}
-        style={styles.button}
-        preset={negativePreset ?? PRESET.ERROR}
-        onPress={() => {
-          if (onTapNegative != null) {
-            onTapNegative();
-          }
-        }}
-      />
-      <BarButton
-        title={positiveButtonTitle ?? 'YES'}
-        style={styles.button}
-        preset={positivePreset ?? PRESET.PRIMARY}
-        onPress={() => {
-          if (onTapPositive != null) {
-            onTapPositive();
-          }
-        }}
-      />
+          <BarButton
+            title={negativeButtonTitle ?? 'NO'}
+            style={styles.button}
+            preset={negativePreset ?? PRESET.ERROR}
+            onPress={() => {
+              if (onTapNegative != null) {
+                onTapNegative();
+              }
+            }}
+          />
+          <BarButton
+            title={positiveButtonTitle ?? 'YES'}
+            style={styles.button}
+            preset={positivePreset ?? PRESET.PRIMARY}
+            onPress={() => {
+              if (onTapPositive != null) {
+                onTapPositive();
+              }
+            }}
+          />
         </View>
-       
       </View>
     </Modal>
   );

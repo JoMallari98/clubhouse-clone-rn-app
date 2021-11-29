@@ -77,7 +77,7 @@ function getUserChatSettings(uid) {
 
 export function* onTriggerGetUserChatSettingsSaga(action) {
   try {
-    const userChatSettings = yield call(getUserChatSettings, 'AzMNWs2Jfapw89WajTOB');
+    const userChatSettings = yield call(getUserChatSettings, action.payload);
     if (userChatSettings) {
       yield put(triggerGetUserChatSettingsSucceeded(userChatSettings));
       return;
@@ -126,9 +126,10 @@ function updateUserChatSettings({ uid, chatSettings }) {
 
 export function* onTriggerUpdateUserChatSettingsSaga(action) {
   try {
+    const { uid, chatSettings } = action?.payload;
     const result = yield call(updateUserChatSettings, {
-      uid: 'AzMNWs2Jfapw89WajTOB',
-      chatSettings: action.payload,
+      uid: uid,
+      chatSettings: chatSettings,
     });
     if (result) {
       yield put(triggerUpdateUserChatSettingsSucceeded(result));

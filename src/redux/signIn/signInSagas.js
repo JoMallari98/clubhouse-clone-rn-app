@@ -45,7 +45,7 @@ export function* onTriggerSignInSaga(action) {
     yield put(triggerSignInSucceded({ signInResult, profileUser }));
   } catch (error) {
     console.log(error);
-    let message = 'User sign in is not success. Please try again';
+    let message = 'User sign in failed. Please try again.';
     if (error.code === 'auth/email-already-in-use') {
       message = 'That email address is already in use!';
     }
@@ -71,7 +71,7 @@ export const triggerSignOutFailed = createAction('signIn/triggerSignOutFailed');
 
 export function* onTriggerSignOutSaga(action) {
   try {
-    console.log('trigger sign out')
+    console.log('trigger sign out');
     StorageUtils.setObjectValue('@user', null);
     StorageUtils.setObjectValue('@profileUser', null);
     yield put(triggerSignOutSucceded({}));

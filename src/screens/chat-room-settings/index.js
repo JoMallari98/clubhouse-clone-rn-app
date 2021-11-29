@@ -18,12 +18,20 @@ import { PRESET } from '../../constants';
 export const ChatRoomSettingsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { chatRoomTypes, commuteTypes, poolSizes, isValid, isLoading, defaultChatRoomSettings } =
-    useSelector((state) => state.settings);
+  const {
+    chatRoomTypes,
+    commuteTypes,
+    poolSizes,
+    isValid,
+    isLoading,
+    isLoadingGetUserChatSettings,
+    defaultChatRoomSettings,
+  } = useSelector((state) => state.settings);
+  const { user, profileUser } = useSelector((state) => state.general);
   const [isVisibleOneOnOneConfirmation, setIsVisibleOneOnOneConfirmation] = useState(false);
 
   useEffect(() => {
-    dispatch(triggerGetGlobalSettings());
+    dispatch(triggerGetGlobalSettings(user?.uid ?? null));
   }, []);
   useEffect(() => {
     if (chatRoomTypes && chatRoomTypes.length > 0) {
@@ -37,8 +45,11 @@ export const ChatRoomSettingsScreen = () => {
     } else {
       dispatch(
         triggerUpdateUserChatSettings({
-          ...defaultChatRoomSettings,
-          oneOnOneSelection: null,
+          chatSettings: {
+            ...defaultChatRoomSettings,
+            oneOnOneSelection: null,
+          },
+          uid: user?.uid ?? null,
         })
       );
       navigation.navigate('Searching');
@@ -145,7 +156,7 @@ export const ChatRoomSettingsScreen = () => {
               onPress={onTapFindARoom}
             />
           </View>
-          <Loader isVisible={isLoading} />
+          <Loader isVisible={isLoading || isLoadingGetUserChatSettings} />
           <OneOnOneConfirmation
             isVisible={isVisibleOneOnOneConfirmation}
             data={{

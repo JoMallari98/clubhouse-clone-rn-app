@@ -5,7 +5,7 @@ import { HomeNavigator } from './HomeNavigator';
 import { SettingsNavigator } from './SettingsNavigator';
 import { Image } from 'react-native';
 
-const HOME_ICON = require('../../assets/nav_search.png');
+const HOME_ICON = require('../../assets/nav_home.png');
 const ACCOUNT_ICON = require('../../assets/nav_profile.png');
 const SETTINGS_ICON = require('../../assets/nav_setting.png');
 

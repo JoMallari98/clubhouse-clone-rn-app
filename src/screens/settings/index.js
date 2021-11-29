@@ -31,7 +31,7 @@ export const SettingsScreen = () => {
     console.log(isSignOutLoading, signOutSuccess, signOutError);
     if (isSignOutLoading) return;
     if (signOutError) return showToast({ message: signOutError });
-    console.log('is sign out success ',isSignOutLoading)
+    console.log('is sign out success ', isSignOutLoading);
     //if ( signOutSuccess) return dispatch(triggerResetAuth())
   }, [isSignOutLoading]);
 
@@ -56,7 +56,7 @@ export const SettingsScreen = () => {
             <TF
               initialValue={username}
               style={styles.emailContainer}
-              label="Alias"
+              label="Username"
               placeholder="@johndo"
               setText={(text) => setUsername(text)}
             />

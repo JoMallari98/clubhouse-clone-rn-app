@@ -33,13 +33,13 @@ export const signInSlice = createSlice({
       state.signOutSuccess = null;
     },
     triggerSignOutSucceded: (state, action) => {
-      console.log('sign out success')
+      console.log('sign out success');
       state.isSignOutLoading = false;
       state.signOutSuccess = 'Sign out success';
-      state.signOutError = null
+      state.signOutError = null;
     },
     triggerSignOutFailed: (state, action) => {
-      console.log('sign out failed')
+      console.log('sign out failed');
       state.isSignOutLoading = false;
       state.signOutError = action.payload;
       state.signOutSuccess = null;

@@ -28,9 +28,9 @@ export default styles = StyleSheet.create({
   button: {
     height: w(50),
     flex: 1,
-    marginHorizontal: w(8)
+    marginHorizontal: w(8),
   },
   buttonContainer: {
-    flexDirection: 'row'
-  }
+    flexDirection: 'row',
+  },
 });

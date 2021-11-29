@@ -22,6 +22,10 @@ export const ImagePickerSelector = ({ isVisible, data }) => {
               size={w(64)}
               source={CAPTURE_ICON}
               onPress={() => data?.onTap('camera')}
+              imageStyle={{
+                width: w(64 * (3 / 5)),
+                height: w(64 * (3 / 5)),
+              }}
             />
             <Text style={styles.buttonTitle}>Take Photo</Text>
           </View>
@@ -30,6 +34,10 @@ export const ImagePickerSelector = ({ isVisible, data }) => {
               size={w(64)}
               source={FOLDER_ICON}
               onPress={() => data?.onTap('library')}
+              imageStyle={{
+                width: w(64 * (3 / 5)),
+                height: w(64 * (3 / 5)),
+              }}
             />
             <Text style={styles.buttonTitle}>Choose from Library</Text>
           </View>
