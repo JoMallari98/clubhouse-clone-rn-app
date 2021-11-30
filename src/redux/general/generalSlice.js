@@ -28,19 +28,24 @@ export const generalSlice = createSlice({
       state.user = null;
     },
     triggerGetCurrentUserSucceded: (state, action) => {
-      return {
-        ...state,
-        isLoading: false,
-        user: action.payload?.user,
-        profileUser: action.payload?.profileUser,
-      };
+      state.isLoading = false;
+      state.user = action.payload?.user;
+      state.profileUser = action.payload?.profileUser;
+      // return {
+      //   ...state,
+      //   isLoading: false,
+      //   user: action.payload?.user,
+      //   profileUser: action.payload?.profileUser,
+      // };
     },
     triggerGetCurrentUserFailed: (state, action) => {
-      return {
-        ...state,
-        isLoading: false,
-        error: action.payload,
-      };
+      state.isLoading = false;
+      state.error = action.payload;
+      // return {
+      //   ...state,
+      //   isLoading: false,
+      //   error: action.payload,
+      // };
     },
     triggerUploadProfilePicture: (state) => {
       state.isUploadingProfilePicture = true;

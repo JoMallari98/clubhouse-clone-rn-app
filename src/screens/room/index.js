@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/core';
+import { StackActions } from '@react-navigation/routers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, SafeAreaView, StatusBar, ScrollView, Image } from 'react-native';
@@ -73,7 +74,12 @@ export const RoomScreen = () => {
   return (
     <SafeAreaView style={styles().screen}>
       <StatusBar />
-      <AppBar title="Room Name" />
+      <AppBar
+        title="Room Name"
+        onPressLeftIcon={() => {
+          navigation.popToTop();
+        }}
+      />
       <View style={styles().scrollContainer}>
         <ScrollView contentContainerStyle={styles().scrollView} scrollEnabled={true}>
           <View style={styles(false, participants?.length * w(90)).container}>
@@ -91,8 +97,7 @@ export const RoomScreen = () => {
             title="Leave Room"
             isDisabled={false}
             onPress={() => {
-              navigation.goBack();
-              navigation.goBack();
+              navigation.popToTop();
             }}
           />
         </View>

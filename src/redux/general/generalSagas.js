@@ -27,7 +27,7 @@ export function* onTriggerGetCurrentUserSaga(action) {
     const user = yield call(StorageUtils.getObjectValue, '@user');
     const profileUser = yield call(StorageUtils.getObjectValue, '@profileUser');
     if (!user) {
-      yield put(triggerGetCurrentUserFailed('User not found'));
+      yield put(triggerGetCurrentUserSucceded({ user, profileUser }));
     } else {
       const currentUser = auth().currentUser;
       if (currentUser == null) {

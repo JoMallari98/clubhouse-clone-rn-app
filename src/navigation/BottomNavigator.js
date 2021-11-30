@@ -8,6 +8,9 @@ import { Image } from 'react-native';
 const HOME_ICON = require('../../assets/nav_home.png');
 const ACCOUNT_ICON = require('../../assets/nav_profile.png');
 const SETTINGS_ICON = require('../../assets/nav_setting.png');
+const ACTIVE_HOME_ICON = require('../../assets/active_nav_home.png');
+const ACTIVE_ACCOUNT_ICON = require('../../assets/active_nav_profile.png');
+const ACTIVE_SETTINGS_ICON = require('../../assets/active_nav_setting.png');
 
 const Tab = createBottomTabNavigator();
 
@@ -22,8 +25,8 @@ export const BottomTabNavigator = () => {
         name="HomeNavigator"
         component={HomeNavigator}
         options={{
-          tabBarIcon: ({ tintColor }) => {
-            return <Image source={HOME_ICON} />;
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            return <Image source={focused ? ACTIVE_HOME_ICON : HOME_ICON} />;
           },
           title: 'Home',
         }}
@@ -32,8 +35,8 @@ export const BottomTabNavigator = () => {
         name="AccountNavigator"
         component={AccountNavigator}
         options={{
-          tabBarIcon: ({ tintColor }) => {
-            return <Image source={ACCOUNT_ICON} />;
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            return <Image source={focused ? ACTIVE_ACCOUNT_ICON : ACCOUNT_ICON} />;
           },
           title: 'Account',
         }}
@@ -42,8 +45,8 @@ export const BottomTabNavigator = () => {
         name="SettingsNavigator"
         component={SettingsNavigator}
         options={{
-          tabBarIcon: ({ tintColor }) => {
-            return <Image source={SETTINGS_ICON} />;
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            return <Image source={focused ? ACTIVE_SETTINGS_ICON : SETTINGS_ICON} />;
           },
           title: 'Settings',
         }}

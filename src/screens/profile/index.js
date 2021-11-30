@@ -182,7 +182,7 @@ export const ProfileScreen = () => {
             style={styles.avatar}
             source={profileUser?.imageUrl ? { uri: profileUser?.imageUrl } : PROFILE_ICON}
             isVisibleCamera={true}
-            size={120}
+            size={90}
             onPress={onTapCamera}
           />
 

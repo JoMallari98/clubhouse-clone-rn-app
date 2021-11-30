@@ -32,16 +32,16 @@ export default styles = StyleSheet.create({
     right: w(20),
   },
   avatar: {
-    marginTop: w(32),
+    //marginTop: w(8),
   },
   name: {
-    fontSize: w(24),
+    fontSize: w(20),
     fontWeight: 'bold',
     fontFamily: fonts.primary,
-    marginTop: w(20),
+    marginTop: w(8),
   },
   username: {
-    fontSize: w(18),
+    fontSize: w(14),
     fontWeight: '600',
     fontFamily: fonts.primary,
     color: colors.palette.lavenderGray,
@@ -52,7 +52,7 @@ export default styles = StyleSheet.create({
     width: '90%',
     height: w(48),
     marginHorizontal: w(20),
-    marginTop: w(24),
+    marginTop: w(8),
   },
   ratingButtonContainer: {
     flex: 1,
@@ -117,12 +117,13 @@ export default styles = StyleSheet.create({
   friendListContainer: {
     width: '90%',
     //marginHorizontal: w(20),
-    marginTop: w(24),
-    height: w(250),
+    marginTop: w(8),
+    //height: w(250),
+    height: '40%',
   },
   friendListTitleContainer: {
     flexDirection: 'row',
-    marginBottom: w(24),
+    marginBottom: w(8),
   },
   handIcon: {
     fontSize: w(14),

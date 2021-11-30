@@ -36,12 +36,22 @@ function getUser(uid) {
   });
 }
 
+function storeValues({ key, value }) {
+  try {
+    return StorageUtils.setObjectValue(key, value);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export function* onTriggerSignInSaga(action) {
   try {
     const signInResult = yield call(signIn, action.payload);
     const profileUser = yield call(getUser, signInResult?.user?.uid);
-    StorageUtils.setObjectValue('@user', signInResult?.user);
-    StorageUtils.setObjectValue('@profileUser', profileUser);
+    yield call(storeValues, { key: '@user', value: signInResult?.user });
+    yield call(storeValues, { key: '@profileUser', value: profileUser });
+    //StorageUtils.setObjectValue('@user', signInResult?.user);
+    //StorageUtils.setObjectValue('@profileUser', profileUser);
     yield put(triggerSignInSucceded({ signInResult, profileUser }));
   } catch (error) {
     console.log(error);

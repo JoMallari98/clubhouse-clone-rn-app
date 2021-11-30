@@ -119,7 +119,7 @@ export default styles = StyleSheet.create({
     width: '90%',
     //marginHorizontal: w(20),
     //marginTop: w(24),
-    //height: w(250),
+    height: '80%',
   },
   friendListTitleContainer: {
     flexDirection: 'row',
