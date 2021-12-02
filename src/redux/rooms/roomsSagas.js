@@ -4,7 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import { DateUtils } from '../../utils/dateUtils';
 
 /*********************************************************
- * FINA A ROOM - START
+ * FIND A ROOM - START
  *********************************************************/
 
 export const triggerFindRoomSucceded = createAction('rooms/triggerFindRoomSucceded');
@@ -158,4 +158,54 @@ export function* onTriggerFindRoomSaga(action) {
 
 /*********************************************************
  * FIND A ROOM - END
+ *********************************************************/
+
+/*********************************************************
+ * UPDATE ROOM STATUS - START
+ *********************************************************/
+
+export const triggerUpdateRoomStatusSucceded = createAction(
+  'rooms/triggerUpdateRoomStatusSucceded'
+);
+
+export const triggerUpdateRoomStatusFailed = createAction('rooms/triggerUpdateRoomStatusFailed');
+
+function updateRoomStatus({ room, roomId, status }) {
+  console.log('update room status *****', room, roomId, status);
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('rooms')
+      .doc(roomId)
+      .get()
+      .then((query) => {
+        console.log('inside ');
+        const receivedData = query.data();
+        console.log('inside call : ', receivedData);
+        firestore()
+          .collection('rooms')
+          .doc(roomId)
+          .update({ ...receivedData, chatRoomStatus: status })
+          .then(() => {
+            resolve(true);
+          });
+      });
+  });
+}
+
+export function* onTriggerUpdateRoomStatusSaga(action) {
+  try {
+    const updateStatus = yield call(updateRoomStatus, action.payload);
+    if (updateStatus) {
+      yield put(triggerUpdateRoomStatusSucceded(null));
+    } else {
+      yield put(triggerUpdateRoomStatusFailed('Room status is not updated'));
+    }
+  } catch (error) {
+    console.log(error);
+    yield put(triggerUpdateRoomStatusFailed('Room status is not updated'));
+  }
+}
+
+/*********************************************************
+ * UPDATE ROOM STATUS - END
  *********************************************************/

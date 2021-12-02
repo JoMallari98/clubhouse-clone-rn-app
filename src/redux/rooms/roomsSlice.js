@@ -6,6 +6,8 @@ const initialState = {
   roomId: null,
   roomSize: null,
   findRoomError: null,
+  isLoadingUpdateRoomStatus: false,
+  updateRoomStatusError: null,
 };
 export const roomsSlice = createSlice({
   name: 'rooms',
@@ -28,9 +30,21 @@ export const roomsSlice = createSlice({
       state.isLoadingFindRoom = false;
       state.findRoomError = action.payload;
     },
+
+    triggerUpdateRoomStatus: (state, action) => {
+      state.isLoadingUpdateRoomStatus = true;
+      state.updateRoomStatusError = null;
+    },
+    triggerUpdateRoomStatusSucceded: (state, action) => {
+      state.isLoadingUpdateRoomStatus = false;
+    },
+    triggerUpdateRoomStatusFailed: (state, action) => {
+      state.isLoadingUpdateRoomStatus = false;
+      state.updateRoomStatusError = action.payload;
+    },
   },
 });
 
-export const { triggerFindRoom } = roomsSlice.actions;
+export const { triggerFindRoom, triggerUpdateRoomStatus } = roomsSlice.actions;
 
 export default roomsSlice.reducer;
