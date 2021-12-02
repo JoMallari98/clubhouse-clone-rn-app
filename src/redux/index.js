@@ -11,6 +11,7 @@ import signUpReducer from './signUp/signUpSlice';
 import settingsReducer from './settings/settingsSlice';
 import startALobbyReducer from './startALobby/startALobbySlice';
 import friendsReducer from './friends/friendsSlice';
+import roomsReducer from './rooms/roomsSlice';
 
 const persistConfig = {
   key: 'root',
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   settings: settingsReducer,
   startALobby: startALobbyReducer,
   friends: friendsReducer,
+  rooms: roomsReducer,
 });
 
 //const persistedReducer = persistReducer(persistConfig, rootReducer);

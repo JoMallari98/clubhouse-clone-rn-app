@@ -4,6 +4,8 @@ import { exp } from 'react-native/Libraries/Animated/Easing';
 const initialState = {
   isLoading: false,
   isLoadingGetUserChatSettings: false,
+  isLoadingUpdateUserChatSettings: false,
+  updateUserChatSettingsError: null,
   error: null,
   getUserChatSettingsError: null,
   chatRoomTypes: [],
@@ -70,13 +72,15 @@ export const settingsSlice = createSlice({
       state.defaultChatRoomSettings = action.payload?.defaultChatRoomSettings;
     },
     triggerUpdateUserChatSettings: (state, action) => {
-      state.isLoading = true;
+      state.isLoadingUpdateUserChatSettings = true;
+      state.updateUserChatSettingsError = null;
     },
     triggerUpdateUserChatSettingsFailed: (state, action) => {
-      state.isLoading = false;
+      state.isLoadingUpdateUserChatSettings = false;
+      state.updateUserChatSettingsError = action.payload;
     },
     triggerUpdateUserChatSettingsSucceeded: (state, action) => {
-      state.isLoading = false;
+      state.isLoadingUpdateUserChatSettings = false;
       state.defaultChatRoomSettings = action.payload;
       state.isValid = isAllSettingsSelected(state);
     },

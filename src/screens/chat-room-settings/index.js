@@ -2,7 +2,14 @@ import { useNavigation } from '@react-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, SafeAreaView, StatusBar, ScrollView } from 'react-native';
-import { AppBar, ToggleButton, BarButton, Loader, OneOnOneConfirmation } from '../../components';
+import {
+  AppBar,
+  ToggleButton,
+  BarButton,
+  Loader,
+  OneOnOneConfirmation,
+  showToast,
+} from '../../components';
 import {
   selectChatRoomType,
   selectCommuteTypes,
@@ -26,6 +33,8 @@ export const ChatRoomSettingsScreen = () => {
     isLoading,
     isLoadingGetUserChatSettings,
     defaultChatRoomSettings,
+    isLoadingUpdateUserChatSettings,
+    updateUserChatSettingsError,
   } = useSelector((state) => state.settings);
   const { user, profileUser } = useSelector((state) => state.general);
   const [isVisibleOneOnOneConfirmation, setIsVisibleOneOnOneConfirmation] = useState(false);
@@ -33,11 +42,20 @@ export const ChatRoomSettingsScreen = () => {
   useEffect(() => {
     dispatch(triggerGetGlobalSettings(user?.uid ?? null));
   }, []);
+
   useEffect(() => {
     if (chatRoomTypes && chatRoomTypes.length > 0) {
       dispatch(triggerGetUserChatSettings());
     }
   }, [chatRoomTypes]);
+
+  useEffect(() => {
+    if (isLoadingUpdateUserChatSettings) return;
+    if (updateUserChatSettingsError) showToast(updateUserChatSettingsError);
+    if (defaultChatRoomSettings && isValid) {
+      navigation.navigate('Searching');
+    }
+  }, [isLoadingUpdateUserChatSettings]);
 
   const onTapFindARoom = () => {
     if (defaultChatRoomSettings.selectedChatRoomType == 3) {
@@ -169,7 +187,7 @@ export const ChatRoomSettingsScreen = () => {
                     oneOnOneSelection: selection,
                   })
                 );
-                navigation.navigate('Searching');
+                //navigation.navigate('Searching');
               },
             }}
           />
