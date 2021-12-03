@@ -81,7 +81,7 @@ export const SearchingScreen = () => {
       });
 
     // Stop listening for updates when no longer required
-    //return () => subscriber();
+    return () => subscriber();
   }, [selectedRoomId]);
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export const SearchingScreen = () => {
         const { chatRoomStatus } = snapshotData?.data() ?? {};
         if (chatRoomStatus == 'LIVE' && snapshotData?.data()?.participants?.length == roomSize) {
           console.log('Room Data: 3', snapshotData.data());
-          navigation.navigate('Room');
+          navigation.navigate('Room', {room: snapshotData?.data()});
         }
       }
     }

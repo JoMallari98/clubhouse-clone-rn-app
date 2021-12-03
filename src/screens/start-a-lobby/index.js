@@ -50,7 +50,7 @@ export const StartALobbyScreen = () => {
             <ToggleButton
               key={index}
               id={item.id}
-              title={item.name}
+              title={item?.name}
               style={index == 0 ? styles.advertizedToggleButton : styles.toggleButton}
               isSelected={item.isSelected}
               onPress={(id) => dispatch(selectChatRoomType(id))}
@@ -71,7 +71,7 @@ export const StartALobbyScreen = () => {
             <ToggleButton
               key={index}
               id={item.id}
-              title={item.name}
+              title={item?.name}
               style={styles.toggleButton}
               isSelected={item.isSelected}
               onPress={(id) => dispatch(selectCommuteTypes(id))}
@@ -91,7 +91,7 @@ export const StartALobbyScreen = () => {
             <ToggleButton
               key={index}
               id={item.id}
-              title={item.name}
+              title={item?.name}
               style={styles.toggleButton}
               isSelected={item.isSelected}
               onPress={(id) => dispatch(selectPoolSizes(id))}

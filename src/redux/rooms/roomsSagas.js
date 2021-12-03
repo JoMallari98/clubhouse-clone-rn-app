@@ -41,7 +41,7 @@ function createRoom({ settings }) {
       chatRoomSettings: settings,
       participants: [],
       chatRoomStatus: 'PENDING',
-      startedTime: DateUtils.getCurrentDate(),
+      startedTime: null,
       endTime: null,
     };
     firestore()
@@ -184,7 +184,7 @@ function updateRoomStatus({ room, roomId, status }) {
         firestore()
           .collection('rooms')
           .doc(roomId)
-          .update({ ...receivedData, chatRoomStatus: status })
+          .update({ ...receivedData, chatRoomStatus: status, startedTime: DateUtils.getCurrentDate() })
           .then(() => {
             resolve(true);
           });
@@ -208,4 +208,63 @@ export function* onTriggerUpdateRoomStatusSaga(action) {
 
 /*********************************************************
  * UPDATE ROOM STATUS - END
+ *********************************************************/
+
+/*********************************************************
+ * UPDATE MIC STATUS - START
+ *********************************************************/
+
+ export const triggerUpdateMicStatusSucceded = createAction(
+  'rooms/triggerUpdateMicStatusSucceded'
+);
+
+export const triggerUpdateMicStatusFailed = createAction('rooms/triggerUpdateMicStatusFailed');
+
+function updateMicStatus({ room, roomId, uid, status }) {
+  console.log('update mic status *****', room, roomId, status);
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('rooms')
+      .doc(roomId)
+      .get()
+      .then((query) => {
+        console.log('inside ',query);
+        const receivedData = query.data();
+        console.log('inside call : ', receivedData);
+        const modifiedParticipants = []
+        receivedData?.participants?.forEach(element => {
+          if(element.id == uid){
+            modifiedParticipants.push({...element, isMuted: status})
+          }else{
+            modifiedParticipants.push(element)
+          }
+        });
+        firestore()
+          .collection('rooms')
+          .doc(roomId)
+          .update({ ...receivedData, participants: modifiedParticipants})
+          .then(() => {
+            resolve(true);
+          });
+      });
+  });
+}
+
+export function* onTriggerUpdateMicStatusSaga(action) {
+  try {
+    const updateStatus = yield call(updateMicStatus, action.payload);
+    console.log('update status : ',updateStatus)
+    if (updateStatus) {
+      yield put(triggerUpdateMicStatusSucceded(null));
+    } else {
+      yield put(triggerUpdateMicStatusFailed('Mic status is not updated'));
+    }
+  } catch (error) {
+    console.log(error);
+    yield put(triggerUpdateMicStatusFailed('Mic status is not updated'));
+  }
+}
+
+/*********************************************************
+ * UPDATE MIC STATUS - END
  *********************************************************/

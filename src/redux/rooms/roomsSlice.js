@@ -8,6 +8,8 @@ const initialState = {
   findRoomError: null,
   isLoadingUpdateRoomStatus: false,
   updateRoomStatusError: null,
+  isLoadingUpdateMicStatus: false,
+  updateMicStatusError: null,
 };
 export const roomsSlice = createSlice({
   name: 'rooms',
@@ -42,9 +44,21 @@ export const roomsSlice = createSlice({
       state.isLoadingUpdateRoomStatus = false;
       state.updateRoomStatusError = action.payload;
     },
+
+    triggerUpdateMicStatus: (state, action) => {
+      state.isLoadingUpdateMicStatus = true;
+      state.updateMicStatusError = null;
+    },
+    triggerUpdateMicStatusSucceded: (state, action) => {
+      state.isLoadingUpdateMicStatus = false;
+    },
+    triggerUpdateMicStatusFailed: (state, action) => {
+      state.isLoadingUpdateMicStatus = false;
+      state.updateMicStatusError = action.payload;
+    },
   },
 });
 
-export const { triggerFindRoom, triggerUpdateRoomStatus } = roomsSlice.actions;
+export const { triggerFindRoom, triggerUpdateRoomStatus, triggerUpdateMicStatus } = roomsSlice.actions;
 
 export default roomsSlice.reducer;

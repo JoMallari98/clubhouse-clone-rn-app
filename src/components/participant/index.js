@@ -6,32 +6,39 @@ import { w, colors } from '../../theme';
 
 const MIC_ICON = require('../../../assets/mic.png');
 const MUTED_MIC_ICON = require('../../../assets/muted_mic.png');
+const PROFILE_ICON = require('../../../assets/profile.png');
 
 export const Participant = ({
-  data,
-  isCurrentUser,
+  item,
   style,
   source,
   onPress,
-  onPressMic,
   isDisabled,
   size = w(80),
+  isCurrentUser,
   ...props
 }) => {
-  const [mute, setMute] = useState(!data.isMicOn);
+  const [mute, setMute] = useState(false);
   useEffect(() => {
-    setMute(!data.isMicOn);
-  }, [data?.isMicOn]);
+    setMute(item?.isMuted);
+  }, [item?.isMuted]);
+  console.log('item site item : ',item)
+  const onTapAvatar = () => {
+    setMute(!mute)
+    onPress(item, 
+      mute);
+  };
+
   return (
     <View style={[style]}>
       <TouchableOpacity
+        disabled={isDisabled}
         onPress={() => {
-          onPress();
-          setMute(!mute);
+          onTapAvatar();
         }}
       >
         <View style={[styles(size).container]}>
-          {data.isSpeaking ? (
+          {item?.isSpeaking ? (
             <View style={[styles(size).speakingBorder]}>
               <ImageBackground
                 source={source}
@@ -41,48 +48,132 @@ export const Participant = ({
             </View>
           ) : (
             <ImageBackground
-              source={source}
+              
+              source={item?.imageUrl ? { uri: item?.imageUrl } : PROFILE_ICON}
               style={[styles(size).imageContainer, mute ? styles(size).mutedImageContainer : null]}
               imageStyle={styles(size).imageStyle}
             ></ImageBackground>
           )}
-          {mute && !isCurrentUser && (
-            <TouchableOpacity
+          {mute && <TouchableOpacity
+              disabled={isDisabled}
               onPress={() => {
-                onPressMic();
-                setMute(!mute);
+                onTapAvatar();
               }}
             >
-              <View style={styles(size).micContainer} onPress={onPressMic}>
+              <View
+                style={styles(size).micContainer}
+                onPress={() => {
+                  onTapAvatar();
+                }}
+              >
                 <Image
                   resizeMode="contain"
                   style={styles(size).micImage}
                   source={mute ? MUTED_MIC_ICON : null}
                 />
               </View>
-            </TouchableOpacity>
-          )}
-          {isCurrentUser && (
-            <TouchableOpacity
-              onPress={() => {
-                onPressMic();
-                setMute(!mute);
-              }}
-            >
-              <View style={styles(size).micContainer} onPress={onPressMic}>
-                <Image
-                  resizeMode="contain"
-                  style={styles(size).micImage}
-                  source={mute ? MIC_ICON : MUTED_MIC_ICON}
-                />
-              </View>
-            </TouchableOpacity>
-          )}
+            </TouchableOpacity> }
         </View>
       </TouchableOpacity>
       <Text numberOfLines={1} ellipsizeMode="clip" style={styles(size).title}>
-        {data.name}
+        {item?.name ?? ''}
       </Text>
     </View>
   );
 };
+
+// export const Participant = ({
+//   data,
+//   isCurrentUser,
+//   style,
+//   source,
+//   onPress,
+//   onPressMic,
+//   isDisabled,
+//   size = w(80),
+//   ...props
+// }) => {
+//   const [mute, setMute] = useState(!data.isMicOn);
+//   useEffect(() => {
+//     setMute(!data.isMicOn);
+//   }, [data?.isMicOn]);
+
+//   const onTapAvatar = () => {
+//     onPressMic(data, mute);
+//   };
+
+//   return (
+//     <View style={[style]}>
+//       <TouchableOpacity
+//         disabled={!isCurrentUser}
+//         onPress={() => {
+//           // onPress();
+//           setMute(!mute);
+//           onTapAvatar();
+//         }}
+//       >
+//         <View style={[styles(size).container]}>
+//           {data.isSpeaking ? (
+//             <View style={[styles(size).speakingBorder]}>
+//               <ImageBackground
+//                 source={source}
+//                 style={[styles(size).imageContainer]}
+//                 imageStyle={styles(size).imageStyle}
+//               ></ImageBackground>
+//             </View>
+//           ) : (
+//             <ImageBackground
+//               source={source}
+//               style={[styles(size).imageContainer, mute ? styles(size).mutedImageContainer : null]}
+//               imageStyle={styles(size).imageStyle}
+//             ></ImageBackground>
+//           )}
+//           {mute && !isCurrentUser && (
+//             <TouchableOpacity
+//               disabled={!isCurrentUser}
+//               onPress={() => {
+//                 // onPressMic(data, !mute);
+//                 setMute(!mute);
+//                 onTapAvatar();
+//               }}
+//             >
+//               <View
+//                 style={styles(size).micContainer}
+//                 onPress={() => {
+//                   onTapAvatar();
+//                 }}
+//               >
+//                 <Image
+//                   resizeMode="contain"
+//                   style={styles(size).micImage}
+//                   source={mute ? MUTED_MIC_ICON : null}
+//                 />
+//               </View>
+//             </TouchableOpacity>
+//           )}
+//           {isCurrentUser && (
+//             <TouchableOpacity
+//               disabled={!isCurrentUser}
+//               onPress={() => {
+//                 // onPressMic(data, !mute);
+//                 setMute(!mute);
+//                 onTapAvatar();
+//               }}
+//             >
+//               <View style={styles(size).micContainer} onPress={() => onTapAvatar()}>
+//                 <Image
+//                   resizeMode="contain"
+//                   style={styles(size).micImage}
+//                   source={mute ? MIC_ICON : MUTED_MIC_ICON}
+//                 />
+//               </View>
+//             </TouchableOpacity>
+//           )}
+//         </View>
+//       </TouchableOpacity>
+//       <Text numberOfLines={1} ellipsizeMode="clip" style={styles(size).title}>
+//         {data.name}
+//       </Text>
+//     </View>
+//   );
+// };

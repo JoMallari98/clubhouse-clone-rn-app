@@ -18,7 +18,7 @@ import {
   onTriggerRejectReceivedFriendRequestSaga,
   onTriggerSendFriendRequestSaga,
 } from './friends/friendsSagas';
-import { onTriggerFindRoomSaga, onTriggerUpdateRoomStatusSaga } from './rooms/roomsSagas';
+import { onTriggerFindRoomSaga, onTriggerUpdateRoomStatusSaga, onTriggerUpdateMicStatusSaga } from './rooms/roomsSagas';
 
 function* rootSaga() {
   yield takeLeading('signUp/triggerSignUpSaga', onTriggerSignUpSaga);
@@ -42,6 +42,7 @@ function* rootSaga() {
   );
   yield takeLeading('rooms/triggerFindRoom', onTriggerFindRoomSaga);
   yield takeLeading('rooms/triggerUpdateRoomStatus', onTriggerUpdateRoomStatusSaga);
+  yield takeLeading('rooms/triggerUpdateMicStatus', onTriggerUpdateMicStatusSaga);
   yield takeLeading('counter/triggerSaga', onTriggerSaga);
 }
 
