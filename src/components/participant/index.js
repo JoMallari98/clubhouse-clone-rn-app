@@ -22,11 +22,10 @@ export const Participant = ({
   useEffect(() => {
     setMute(item?.isMuted);
   }, [item?.isMuted]);
-  console.log('item site item : ',item)
+
   const onTapAvatar = () => {
-    setMute(!mute)
-    onPress(item, 
-      mute);
+    setMute(!mute);
+    onPress(item, mute);
   };
 
   return (
@@ -48,13 +47,13 @@ export const Participant = ({
             </View>
           ) : (
             <ImageBackground
-              
               source={item?.imageUrl ? { uri: item?.imageUrl } : PROFILE_ICON}
               style={[styles(size).imageContainer, mute ? styles(size).mutedImageContainer : null]}
               imageStyle={styles(size).imageStyle}
             ></ImageBackground>
           )}
-          {mute && <TouchableOpacity
+          {mute && (
+            <TouchableOpacity
               disabled={isDisabled}
               onPress={() => {
                 onTapAvatar();
@@ -72,7 +71,8 @@ export const Participant = ({
                   source={mute ? MUTED_MIC_ICON : null}
                 />
               </View>
-            </TouchableOpacity> }
+            </TouchableOpacity>
+          )}
         </View>
       </TouchableOpacity>
       <Text numberOfLines={1} ellipsizeMode="clip" style={styles(size).title}>

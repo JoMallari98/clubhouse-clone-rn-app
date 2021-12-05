@@ -2,8 +2,17 @@ import { useNavigation, useRoute } from '@react-navigation/core';
 import { StackActions } from '@react-navigation/routers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text, SafeAreaView, StatusBar, ScrollView, Image } from 'react-native';
-import { AppBar, ToggleButton, BarButton, LinkButton, Participant } from '../../components';
+import { View, Text, SafeAreaView, StatusBar, ScrollView, Image, BackHandler } from 'react-native';
+import {
+  AppBar,
+  ToggleButton,
+  BarButton,
+  LinkButton,
+  Participant,
+  ConfirmationMessage,
+  Loader,
+  showToast,
+} from '../../components';
 import LottieView from 'lottie-react-native';
 
 import styles from './styles';
@@ -13,7 +22,11 @@ import { w } from '../../theme';
 import RtcEngine from 'react-native-agora';
 import { AgoraConfig } from '../../config/agora-config';
 import { join } from '@redux-saga/core/effects';
-import { triggerUpdateMicStatus } from '../../redux/rooms/roomsSlice';
+import {
+  triggerLeaveRoom,
+  triggerResetRoom,
+  triggerUpdateMicStatus,
+} from '../../redux/rooms/roomsSlice';
 import firestore from '@react-native-firebase/firestore';
 
 const PROFILE_ICON = require('../../../assets/profile.png');
@@ -32,6 +45,9 @@ export const RoomScreen = () => {
     room,
     roomId,
     roomSize,
+    isLoadingLeaveRoom,
+    leaveRoomError,
+    leaveRoomSuccess,
   } = useSelector((state) => state.rooms);
 
   const [muteRoom, setMuteRoom] = useState(false);
@@ -39,6 +55,8 @@ export const RoomScreen = () => {
   const [engine, setEngine] = useState();
   const [joinSucceed, setJoinSucceed] = useState(false);
   const [peerIds, setPeerIds] = useState([]);
+  const [isVisibleLeaveConfirmatinMessage, setIsVisibleLeaveConfirmationMessage] = useState(false);
+  const [isVisibleLoader, setIsVisibleLoader] = useState(false);
 
   const initAgora = async () => {
     const _engine = await RtcEngine.create(AgoraConfig.appId);
@@ -73,22 +91,23 @@ export const RoomScreen = () => {
 
   const joinChannel = async (_engine) => {
     await _engine?.joinChannel(
-      '006a7dbe5e4d7574145b90146011fca9599IADysQJ/IL8Qc13H3VuUtcVe+BZaRz37OaKuW7hMNgixAFQ8SVUAAAAAEAAJySkOooCrYQEAAQChgKth',
-      'test-audio',
+      '006a7dbe5e4d7574145b90146011fca9599IAB7jhKs6sKXxT+ZlL1MVxYbCHgHPzBc3sahqRQXr3dXAO5O6mcAAAAAEACCxsjXEd+sYQEAAQAQ36xh',
+      'tripin-test',
       null,
       0
     );
   };
 
   const onTapSpeakerChange = (data, status) => {
-    console.log(' page : ==============>',engine,data, status)
-    engine?.enableLocalAudio(status).then(() => {
-      console.log('mute or unmute', data, status)
-      dispatch(triggerUpdateMicStatus({room, roomId, uid: profileUser?.id, status: !status}))
-    }).catch((err) => {
-      console.warn('enableLocalAudio', err)
-    })
-  }
+    engine
+      ?.enableLocalAudio(status)
+      .then(() => {
+        dispatch(triggerUpdateMicStatus({ room, roomId, uid: profileUser?.id, status: !status }));
+      })
+      .catch((err) => {
+        console.warn('enableLocalAudio', err);
+      });
+  };
 
   useEffect(() => {
     initAgora();
@@ -107,19 +126,31 @@ export const RoomScreen = () => {
   }, []);
 
   useEffect(() => {
-    console.log('selected room id : ', roomId);
-    //if (selectedRoomId == null) return;
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => true);
+    return () => backHandler.remove();
+  }, []);
+
+  useEffect(() => {
     const subscriber = firestore()
       .collection('rooms')
       .doc(roomId)
       .onSnapshot((documentSnapshot) => {
-        console.log('rec doc snap : YD : :  ::: : ',documentSnapshot)
-        setParticipants(getReOrderedParticipants(documentSnapshot?.data()?.participants))
+        console.log('room data >>>>>>>>>>>>>>>>>>>++++', documentSnapshot?.data());
+        setParticipants(getReOrderedParticipants(documentSnapshot?.data()?.participants));
       });
 
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
+
+  useEffect(() => {
+    if (isLoadingLeaveRoom) return;
+    if (leaveRoomError) return showToast(leaveRoomError);
+    if (leaveRoomSuccess) {
+      dispatch(triggerResetRoom());
+      return navigation.popToTop();
+    }
+  }, [isLoadingLeaveRoom]);
 
   const getStyle = (index) => {
     if (index == 0) {
@@ -142,18 +173,35 @@ export const RoomScreen = () => {
 
   const getReOrderedParticipants = (list) => {
     const orderedList = [
-      ...list.filter((el) => el.id == profileUser.id),
-      ...list.filter((el) => el.id != profileUser.id),
+      ...(list?.filter((el) => el.id == profileUser.id) ?? []),
+      ...(list?.filter((el) => el.id != profileUser.id) ?? []),
     ];
     const generatedList = [];
-    console.log('all users : 123 ', allUsers);
+
     orderedList.forEach((element) => {
-      const filteredUser = allUsers?.filter((el) => el?.data().id == element.id);
-      console.log(filteredUser);
-      generatedList.push({ ...element, name: (filteredUser[0]?.data()?.fullName?.split(' '))[0], imageUrl:  filteredUser[0]?.data()?.imageUrl});
+      if (element?.isLeft == undefined || element?.isLeft == null || element?.isLeft != true) {
+        const filteredUser = allUsers?.filter((el) => el?.data().id == element.id);
+        generatedList.push({
+          ...element,
+          name: (filteredUser[0]?.data()?.fullName?.split(' '))[0],
+          imageUrl: filteredUser[0]?.data()?.imageUrl,
+        });
+      }
     });
-    console.log('generated list ', generatedList);
     return generatedList;
+  };
+
+  const leaveChannel = async () => {
+    await engine?.leaveChannel();
+    setPeerIds([]);
+    setJoinSucceed(false);
+  };
+
+  const requestToLeaveChatRoom = async () => {
+    setIsVisibleLoader(true);
+    await leaveChannel();
+    setIsVisibleLoader(false);
+    dispatch(triggerLeaveRoom({ roomId, uid: profileUser?.id }));
   };
 
   const renderParticipants = () => {
@@ -166,9 +214,8 @@ export const RoomScreen = () => {
             source={PROFILE_ICON}
             item={item}
             isCurrentUser={item.id == profileUser.id}
-            isDisabled = {item.id != profileUser.id}
-            onPress={(data, status ) => {
-              console.log(data, status);
+            isDisabled={item.id != profileUser.id}
+            onPress={(data, status) => {
               onTapSpeakerChange(data, status);
             }}
           />
@@ -183,7 +230,8 @@ export const RoomScreen = () => {
       <AppBar
         title="Room Name"
         onPressLeftIcon={() => {
-          navigation.popToTop();
+          setIsVisibleLeaveConfirmationMessage(true);
+          //navigation.popToTop();
         }}
       />
       <View style={styles().scrollContainer}>
@@ -203,7 +251,8 @@ export const RoomScreen = () => {
             title="Leave Room"
             isDisabled={false}
             onPress={() => {
-              navigation.popToTop();
+              setIsVisibleLeaveConfirmationMessage(true);
+              //navigation.popToTop();
             }}
           />
         </View>
@@ -219,6 +268,19 @@ export const RoomScreen = () => {
           />
           </View>*/}
       </View>
+      <ConfirmationMessage
+        isVisible={isVisibleLeaveConfirmatinMessage}
+        title="WARNING!"
+        detail="Are you sure? do you really want to leave this chat room?"
+        onTapNegative={() => {
+          setIsVisibleLeaveConfirmationMessage(false);
+        }}
+        onTapPositive={() => {
+          setIsVisibleLeaveConfirmationMessage(false);
+          requestToLeaveChatRoom();
+        }}
+      />
+      <Loader isVisible={isVisibleLoader} />
     </SafeAreaView>
   );
 };

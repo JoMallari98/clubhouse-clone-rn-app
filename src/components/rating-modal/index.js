@@ -21,8 +21,6 @@ export const RatingModal = ({ isVisible, item, onTapClose, onTapRate, onTapRepor
 
   useEffect(() => {
     if (item?.rating != null) {
-      console.log('rating : ', item.rating);
-      console.log(parseFloat(item?.rating));
       setStarRating(parseFloat(item?.rating ?? '0'));
     } else {
       setStarRating(null);
@@ -30,7 +28,6 @@ export const RatingModal = ({ isVisible, item, onTapClose, onTapRate, onTapRepor
     setIsVisibleRatedAnimatin(false);
   }, [item]);
   const ratingCompleted = (rating) => {
-    console.log('Rating is: ' + rating);
     setStarRating(rating);
   };
 

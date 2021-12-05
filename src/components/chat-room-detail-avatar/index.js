@@ -16,8 +16,6 @@ export const ChatRoomDetailAvatar = ({
   ...props
 }) => {
   const getImage = () => {
-    console.log('image url : ', item?.imageUrl);
-
     const renderRatingContainer = () => {
       if (item?.rating) {
         return (

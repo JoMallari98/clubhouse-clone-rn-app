@@ -71,6 +71,7 @@ export const PreviousChatDetailScreen = () => {
   const [seletedItemForRating, setSelectedItemForRating] = useState(null);
 
   const renderChatRoomItem = ({ item }) => {
+    console.log('item ___________>>>', item);
     return (
       <ChatRoomDetailAvatar
         item={item}
@@ -86,7 +87,7 @@ export const PreviousChatDetailScreen = () => {
   return (
     <SafeAreaView style={styles.screen}>
       <StatusBar />
-      <AppBar title="Room Name" />
+      <AppBar title={item?.name ?? 'Room Name'} />
       <View style={styles.container}>
         <FlatList
           showsVerticalScrollIndicator={false}

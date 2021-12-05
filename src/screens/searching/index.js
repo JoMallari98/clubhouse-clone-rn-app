@@ -59,20 +59,16 @@ export const SearchingScreen = () => {
     if (room && roomId) {
       // TODO: CREATE LISTENER
       setSelectedRoomId(roomId);
-      console.log('received room : : : ', room);
+
       if (room?.participants != null && room?.participants?.length == roomSize) {
-        console.log('received room : : : if ');
         //navigation.navigate('Room')
         setRoomStatus('LIVE');
         updateChatRoomStatus();
-        console.log('received room : : : if else');
       }
     }
   }, [isLoadingFindRoom]);
 
   useEffect(() => {
-    console.log('selected room id : ', selectedRoomId);
-    //if (selectedRoomId == null) return;
     const subscriber = firestore()
       .collection('rooms')
       .doc(selectedRoomId)
@@ -86,13 +82,10 @@ export const SearchingScreen = () => {
 
   useEffect(() => {
     if (snapshotData) {
-      console.log('Room Data: 1', snapshotData.data());
       if (selectedRoomId) {
-        console.log('Room Data: 2', snapshotData.data());
         const { chatRoomStatus } = snapshotData?.data() ?? {};
         if (chatRoomStatus == 'LIVE' && snapshotData?.data()?.participants?.length == roomSize) {
-          console.log('Room Data: 3', snapshotData.data());
-          navigation.navigate('Room', {room: snapshotData?.data()});
+          navigation.navigate('Room', { room: snapshotData?.data() });
         }
       }
     }
@@ -101,9 +94,6 @@ export const SearchingScreen = () => {
   useEffect(() => {
     if (isLoadingUpdateRoomStatus) return;
     if (updateRoomStatusError) return showToast(updateRoomStatusError);
-    // searchButtonRef.current.handleOnPress()
-    // console.log(searchButtonRef)
-    // console.log(searchButtonRef?.current?.focus())
   }, [isLoadingUpdateRoomStatus]);
 
   async function updateChatRoomStatus() {
@@ -130,7 +120,6 @@ export const SearchingScreen = () => {
   };
 
   const findARoom = () => {
-    console.log('default chat room settings : ', defaultChatRoomSettings);
     dispatch(triggerFindRoom({ settings: defaultChatRoomSettings, user: profileUser }));
   };
 

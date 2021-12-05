@@ -4,7 +4,10 @@ import { View, Text, SafeAreaView, StatusBar } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { BarButton, AppBar, Avatar, Message, Loader, showToast } from '../../components';
 import { PRESET } from '../../constants';
-import { triggerGetUserChatSettings } from '../../redux/settings/settingsSlice';
+import {
+  triggerGetGlobalSettings,
+  triggerGetUserChatSettings,
+} from '../../redux/settings/settingsSlice';
 import { triggerGetFriends } from '../../redux/friends/friendsSlice';
 
 import styles from './styles';
@@ -26,6 +29,7 @@ export const HomeScreen = () => {
   useEffect(() => {
     dispatch(triggerGetUserChatSettings(user?.uid ?? null));
     dispatch(triggerGetFriends(user?.uid));
+    dispatch(triggerGetGlobalSettings(user?.uid ?? null));
   }, []);
 
   useEffect(() => {

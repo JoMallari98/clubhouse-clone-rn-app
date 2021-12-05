@@ -35,9 +35,13 @@ function findRoom({ settings }) {
   });
 }
 
-function createRoom({ settings }) {
+function createRoom({ settings, globalSettings }) {
+  console.log('create room ***************', settings, globalSettings);
   return new Promise((resolve, reject) => {
     const room = {
+      name:
+        globalSettings?.chatRoomTypes?.filter((el) => el.id == settings?.selectedChatRoomType)[0]
+          ?.value ?? '',
       chatRoomSettings: settings,
       participants: [],
       chatRoomStatus: 'PENDING',
@@ -104,12 +108,11 @@ export function* onTriggerFindRoomSaga(action) {
 
     if (rooms != null && rooms.length > 0) {
       const filteredRoom = getFilteredRoom({ rooms, settings, globalSettings })[0];
-      console.log('filtered room : ', filteredRoom);
 
       if (filteredRoom) {
         room = filteredRoom;
       } else {
-        yield call(createRoom, action.payload);
+        yield call(createRoom, { settings, globalSettings });
         rooms = yield call(findRoom, action.payload);
         if (rooms != null && rooms.length > 0) {
           room = getFilteredRoom({ rooms, settings, globalSettings })[0];
@@ -117,20 +120,13 @@ export function* onTriggerFindRoomSaga(action) {
       }
     } else {
       // TODO: CREATE ROOM
-      yield call(createRoom, action.payload);
+      yield call(createRoom, { settings, globalSettings });
       rooms = yield call(findRoom, action.payload);
       if (rooms != null && rooms.length > 0) {
         room = getFilteredRoom({ rooms, settings, globalSettings })[0];
       }
     }
-    console.log('room : ', room);
-    console.log('document Id  : ', room.id);
-    console.log(
-      'room size : ',
-      globalSettings?.preferredPoolSizes?.filter((innerEl) => {
-        return innerEl.id == settings?.selectedPreferredPoolSize;
-      })[0]?.value
-    );
+
     // TODO : ADD PARTICIPANT TO ROOM
     const addParticipantResult = yield call(addParticipantToTheRoom, {
       room,
@@ -171,20 +167,22 @@ export const triggerUpdateRoomStatusSucceded = createAction(
 export const triggerUpdateRoomStatusFailed = createAction('rooms/triggerUpdateRoomStatusFailed');
 
 function updateRoomStatus({ room, roomId, status }) {
-  console.log('update room status *****', room, roomId, status);
   return new Promise((resolve, reject) => {
     firestore()
       .collection('rooms')
       .doc(roomId)
       .get()
       .then((query) => {
-        console.log('inside ');
         const receivedData = query.data();
-        console.log('inside call : ', receivedData);
+
         firestore()
           .collection('rooms')
           .doc(roomId)
-          .update({ ...receivedData, chatRoomStatus: status, startedTime: DateUtils.getCurrentDate() })
+          .update({
+            ...receivedData,
+            chatRoomStatus: status,
+            startedTime: DateUtils.getCurrentDate(),
+          })
           .then(() => {
             resolve(true);
           });
@@ -214,35 +212,31 @@ export function* onTriggerUpdateRoomStatusSaga(action) {
  * UPDATE MIC STATUS - START
  *********************************************************/
 
- export const triggerUpdateMicStatusSucceded = createAction(
-  'rooms/triggerUpdateMicStatusSucceded'
-);
+export const triggerUpdateMicStatusSucceded = createAction('rooms/triggerUpdateMicStatusSucceded');
 
 export const triggerUpdateMicStatusFailed = createAction('rooms/triggerUpdateMicStatusFailed');
 
 function updateMicStatus({ room, roomId, uid, status }) {
-  console.log('update mic status *****', room, roomId, status);
   return new Promise((resolve, reject) => {
     firestore()
       .collection('rooms')
       .doc(roomId)
       .get()
       .then((query) => {
-        console.log('inside ',query);
         const receivedData = query.data();
-        console.log('inside call : ', receivedData);
-        const modifiedParticipants = []
-        receivedData?.participants?.forEach(element => {
-          if(element.id == uid){
-            modifiedParticipants.push({...element, isMuted: status})
-          }else{
-            modifiedParticipants.push(element)
+
+        const modifiedParticipants = [];
+        receivedData?.participants?.forEach((element) => {
+          if (element.id == uid) {
+            modifiedParticipants.push({ ...element, isMuted: status });
+          } else {
+            modifiedParticipants.push(element);
           }
         });
         firestore()
           .collection('rooms')
           .doc(roomId)
-          .update({ ...receivedData, participants: modifiedParticipants})
+          .update({ ...receivedData, participants: modifiedParticipants })
           .then(() => {
             resolve(true);
           });
@@ -253,7 +247,7 @@ function updateMicStatus({ room, roomId, uid, status }) {
 export function* onTriggerUpdateMicStatusSaga(action) {
   try {
     const updateStatus = yield call(updateMicStatus, action.payload);
-    console.log('update status : ',updateStatus)
+
     if (updateStatus) {
       yield put(triggerUpdateMicStatusSucceded(null));
     } else {
@@ -267,4 +261,176 @@ export function* onTriggerUpdateMicStatusSaga(action) {
 
 /*********************************************************
  * UPDATE MIC STATUS - END
+ *********************************************************/
+
+/*********************************************************
+ * LEAVE ROOM - START
+ *********************************************************/
+
+export const triggerLeaveRoomSucceded = createAction('rooms/triggerLeaveRoomSucceded');
+
+export const triggerLeaveRoomFailed = createAction('rooms/triggerLeaveRoomFailed');
+
+function leaveRoom({ roomId, uid }) {
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('rooms')
+      .doc(roomId)
+      .get()
+      .then((query) => {
+        const receivedData = query.data();
+
+        const modifiedParticipants = [];
+        receivedData?.participants?.forEach((element) => {
+          if (element.id == uid) {
+            modifiedParticipants.push({ ...element, isLeft: true });
+          } else {
+            modifiedParticipants.push(element);
+          }
+        });
+        firestore()
+          .collection('rooms')
+          .doc(roomId)
+          .update({ ...receivedData, participants: modifiedParticipants })
+          .then(() => {
+            resolve(true);
+          });
+      });
+  });
+}
+
+export function* onTriggerLeaveRoomSaga(action) {
+  try {
+    const updateStatus = yield call(leaveRoom, action.payload);
+
+    if (updateStatus) {
+      yield put(triggerLeaveRoomSucceded(null));
+    } else {
+      yield put(triggerLeaveRoomFailed('Leave room is not successfull'));
+    }
+  } catch (error) {
+    console.log(error);
+    yield put(triggerLeaveRoomFailed('Leave room is not successfull'));
+  }
+}
+
+/*********************************************************
+ * LEAVE ROOM - END
+ *********************************************************/
+
+/*********************************************************
+ * GET PREVIOUS CHAT ROOMS - START
+ *********************************************************/
+
+export const triggerGetPreviousChatRoomsSucceded = createAction(
+  'rooms/triggerGetPreviousChatRoomsSucceded'
+);
+
+export const triggerGetPreviousChatRoomsFailed = createAction(
+  'rooms/triggerGetPreviousChatRoomsFailed'
+);
+
+function getPreviousChatRooms({ uid }) {
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('rooms')
+      .get()
+      .then((query) => {
+        console.log('inside ', query, uid);
+        const receivedData = query.docs;
+        const previousChatRooms = [];
+        receivedData?.forEach((element) => {
+          console.log(element?.data()?.participants);
+          const isParticipant = element?.data()?.participants?.filter((el) => el.id == uid);
+          console.log('isParticipant ', isParticipant);
+          if (isParticipant && isParticipant?.length > 0) {
+            previousChatRooms.push(element);
+          }
+        });
+        resolve(previousChatRooms);
+        console.log('rec prev chat room >>>>>>>>', previousChatRooms);
+      });
+  });
+}
+
+export function* onTriggerGetPreviousChatRoomsSaga(action) {
+  try {
+    const prevChatRoomResponse = yield call(getPreviousChatRooms, action.payload);
+    console.log('update status : ', prevChatRoomResponse);
+    if (prevChatRoomResponse) {
+      yield put(triggerGetPreviousChatRoomsSucceded(prevChatRoomResponse));
+    } else {
+      yield put(triggerGetPreviousChatRoomsFailed('Leave room is not successfull'));
+    }
+  } catch (error) {
+    console.log(error);
+    yield put(triggerGetPreviousChatRoomsFailed('Leave room is not successfull'));
+  }
+}
+
+/*********************************************************
+ * GET PREVIOUS CHAT ROOMS - END
+ *********************************************************/
+
+/*********************************************************
+ * REJOIN ROOM - START
+ *********************************************************/
+
+export const triggerRejoinRoomSucceded = createAction('rooms/triggerRejoinRoomSucceded');
+
+export const triggerRejoinRoomFailed = createAction('rooms/triggerRejoinRoomFailed');
+
+function rejoinRoom({ roomId, uid, settings, globalSettings }) {
+  console.log('received params : ', roomId, uid);
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('rooms')
+      .doc(roomId)
+      .get()
+      .then((query) => {
+        const receivedData = query.data();
+        console.log('received data >>>>>>> : ', query.id, roomId);
+        const modifiedParticipants = [];
+        receivedData?.participants?.forEach((element) => {
+          if (element.id == uid) {
+            modifiedParticipants.push({ ...element, isLeft: false });
+          } else {
+            modifiedParticipants.push(element);
+          }
+        });
+        firestore()
+          .collection('rooms')
+          .doc(roomId)
+          .update({ ...receivedData, participants: modifiedParticipants })
+          .then(() => {
+            resolve({
+              room: { ...receivedData, participants: modifiedParticipants },
+              roomId: roomId,
+              roomSize: globalSettings?.preferredPoolSizes?.filter((innerEl) => {
+                return innerEl.id == settings?.selectedPreferredPoolSize;
+              })[0]?.value,
+            });
+          });
+      });
+  });
+}
+
+export function* onTriggerRejoinRoomSaga(action) {
+  try {
+    const globalSettings = yield call(getGlobalSettings, null);
+    const updateStatus = yield call(rejoinRoom, { ...action.payload, globalSettings });
+    console.log('$$$$$$$$$$$$$$$$ upated status ; ', updateStatus);
+    if (updateStatus) {
+      yield put(triggerRejoinRoomSucceded(updateStatus));
+    } else {
+      yield put(triggerRejoinRoomFailed('Rejoin room is not successfull'));
+    }
+  } catch (error) {
+    console.log(error);
+    yield put(triggerRejoinRoomFailed('Rejoin room is not successfull'));
+  }
+}
+
+/*********************************************************
+ * REJOIN ROOM - END
  *********************************************************/

@@ -33,4 +33,8 @@ export default styles = StyleSheet.create({
     fontWeight: '100',
     marginTop: w(8),
   },
+  rejoin: {
+    paddingRight: w(16),
+    paddingLeft: w(16),
+  },
 });
