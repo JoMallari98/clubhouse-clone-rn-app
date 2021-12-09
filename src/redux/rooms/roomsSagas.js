@@ -2,6 +2,7 @@ import { createAction } from '@reduxjs/toolkit';
 import { put, delay, call, eventChannel } from 'redux-saga/effects';
 import firestore from '@react-native-firebase/firestore';
 import { DateUtils } from '../../utils/dateUtils';
+import functions from '@react-native-firebase/functions';
 
 /*********************************************************
  * FIND A ROOM - START
@@ -55,6 +56,20 @@ function createRoom({ settings, globalSettings }) {
       .then(() => {
         resolve(room);
       });
+  });
+}
+
+function generateToken({ room, user }) {
+  //http://172.20.10.5:5001
+  return new Promise((resolve, reject) => {
+    functions().useFunctionsEmulator('http://172.20.10.5:5001');
+      functions()
+      .httpsCallable("createCallsWithTokens")({
+        channelId: 'sldkfjlsklkf'
+      }).then((response) => {
+          console.log('generate token ===================>', response);
+          resolve(true);
+        });
   });
 }
 
@@ -126,6 +141,9 @@ export function* onTriggerFindRoomSaga(action) {
         room = getFilteredRoom({ rooms, settings, globalSettings })[0];
       }
     }
+
+    // TODO : GENERATE TOKEN
+    //yield call(generateToken, { room, user });
 
     // TODO : ADD PARTICIPANT TO ROOM
     const addParticipantResult = yield call(addParticipantToTheRoom, {
@@ -330,25 +348,38 @@ export const triggerGetPreviousChatRoomsFailed = createAction(
   'rooms/triggerGetPreviousChatRoomsFailed'
 );
 
-function getPreviousChatRooms({ uid }) {
+function getPreviousChatRooms({ uid, allUsers }) {
   return new Promise((resolve, reject) => {
     firestore()
       .collection('rooms')
       .get()
       .then((query) => {
-        console.log('inside ', query, uid);
         const receivedData = query.docs;
         const previousChatRooms = [];
         receivedData?.forEach((element) => {
-          console.log(element?.data()?.participants);
           const isParticipant = element?.data()?.participants?.filter((el) => el.id == uid);
-          console.log('isParticipant ', isParticipant);
+
           if (isParticipant && isParticipant?.length > 0) {
-            previousChatRooms.push(element);
+            //load imageUrl
+            const modifiedParticipants = [];
+            element?.data()?.participants?.forEach((partElem) => {
+              const filteredUser = allUsers?.filter((user) => {
+                return partElem.id == user.data()?.id;
+              });
+              modifiedParticipants.push({
+                ...partElem,
+                imageUrl: filteredUser[0]?.data()?.imageUrl,
+              });
+            });
+            previousChatRooms.push({
+              ...element?.data(),
+              id: element?.id,
+              participants: modifiedParticipants,
+            });
           }
         });
-        resolve(previousChatRooms);
         console.log('rec prev chat room >>>>>>>>', previousChatRooms);
+        resolve(previousChatRooms);
       });
   });
 }

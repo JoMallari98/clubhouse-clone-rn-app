@@ -120,7 +120,6 @@ export const roomsSlice = createSlice({
       state.rejoinRoomSuccess = null;
     },
     triggerRejoinRoomSucceded: (state, action) => {
-      console.log('rejoin success **************************', action.payload);
       state.isLoadingRejoinRoom = false;
       state.rejoinRoomData = action.payload?.room;
 

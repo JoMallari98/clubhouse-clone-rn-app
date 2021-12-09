@@ -91,8 +91,8 @@ export const RoomScreen = () => {
 
   const joinChannel = async (_engine) => {
     await _engine?.joinChannel(
-      '006a7dbe5e4d7574145b90146011fca9599IAB7jhKs6sKXxT+ZlL1MVxYbCHgHPzBc3sahqRQXr3dXAO5O6mcAAAAAEACCxsjXEd+sYQEAAQAQ36xh',
-      'tripin-test',
+      '006a7dbe5e4d7574145b90146011fca9599IADBY4OxEzY4lUYCazl6WEzAZzZ/54PbhmzcFq5ulLN3l1Q8SVUAAAAAEAAUEHcdTDWyYQEAAQBMNbJh',
+      'test-audio',
       null,
       0
     );

@@ -4,13 +4,14 @@ import { View, Text, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import styles from './styles';
 import { DateUtils } from '../../utils/dateUtils';
-import { LinkButton } from '..';
+import { LinkButton, AvatarPanel } from '..';
 
 const PROFILE_ICON = require('../../../assets/profile.png');
 const STAR_ICON = require('../../../assets/star.png');
 
 export const ChatRoomListItem = ({ style, item, onTap, onTapRejoin }) => {
-  const { name, startedTime, chatRoomStatus, imageUrl } = item?.data();
+  const { name, startedTime, chatRoomStatus, imageUrl, participants } = item;
+  console.log('CHAT ROOOM LIST ITEM , item ', item, participants);
   return (
     <TouchableOpacity
       onPress={() => {
@@ -32,7 +33,7 @@ export const ChatRoomListItem = ({ style, item, onTap, onTapRejoin }) => {
             onTap(item);
           }}
         >
-          <Image source={imageUrl ? { uri: imageUrl } : PROFILE_ICON} style={styles.profile} />
+          <AvatarPanel data={participants} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
